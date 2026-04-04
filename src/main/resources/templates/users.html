@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>TD2 - SR03</title>
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+
+</head>
+<body>
+
+    <header>
+           <h1> Liste exemple avec thymeleaf </h1>
+    </header>
+
+    <main>
+        <table class="table">
+        <tr>
+            <th>Id</th>
+            <th>Prénom</th>
+            <th>Nom</th>
+            <th>Mail</th>
+        </tr>
+        <tr th:each="user : ${myusers}">
+            <td th:text="${user.getUsersId()}"></td>
+            <td th:text="${user.getFirstname()}"></td>
+            <td th:text="${user.getLastname()}"></td>
+            <td th:text="${user.getMail()}"></td>
+        </tr>
+
+        </table>
+
+    </main>
+
+    <footer>
+
+    </footer>
+
+</body>
+<script src="https://cdn.metroui.org.ua/current/metro.js"></script>
+</html>
