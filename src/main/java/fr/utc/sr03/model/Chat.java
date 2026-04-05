@@ -3,38 +3,44 @@ package fr.utc.sr03.model;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
-@Table(name = "Chat")
+@Table(name = "chat")
 public class Chat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatid")
-    private int chatId;
+    private int id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "creationdate")
-    private Timestamp creationdate;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 
-    @Column(name = "validityend")
-    private Timestamp validityend;
+    @Column(name = "ends_at")
+    private Timestamp endsAt;
 
     @ManyToOne
-    @JoinColumn(name = "creator")
+    @JoinColumn(name = "creator_id", nullable = false)
     private Users creator;
 
-    public int getChatId() {
-        return chatId;
+    @OneToMany(mappedBy = "chat")
+    private List<Invitation> invitations;
+
+    // ===================
+    // Getters and Setters
+    // ===================
+    public int getId() {
+        return id;
     }
 
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -53,20 +59,20 @@ public class Chat {
         this.description = description;
     }
 
-    public Timestamp getCreationdate() {
-        return creationdate;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreationdate(Timestamp creationdate) {
-        this.creationdate = creationdate;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Timestamp getValidityend() {
-        return validityend;
+    public Timestamp getEndsAt() {
+        return endsAt;
     }
 
-    public void setValidityend(Timestamp validityend) {
-        this.validityend = validityend;
+    public void setEndsAt(Timestamp endsAt) {
+        this.endsAt = endsAt;
     }
 
     public Users getCreator() {
@@ -75,5 +81,13 @@ public class Chat {
 
     public void setCreator(Users creator) {
         this.creator = creator;
+    }
+
+    public List<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<Invitation> invitations) {
+        this.invitations = invitations;
     }
 }

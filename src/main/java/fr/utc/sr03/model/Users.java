@@ -2,30 +2,50 @@ package fr.utc.sr03.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
-    private int usersId;
+    @Column(name = "id")
+    private int id;
 
-    @Column(name = "firstname")
+    @Column(name = "firstname", nullable = false)
     private String firstname;
 
-    @Column(name = "lastname")
+    @Column(name = "lastname", nullable = false)
     private String lastname;
 
-    @Column(name = "mail")
+    @Column(name = "mail", nullable = false, unique = true)
     private String mail;
 
-    public int getUsersId() {
-        return usersId;
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "admin")
+    private boolean admin;
+
+    @Column(name = "active")
+    private boolean active;
+
+    @OneToMany(mappedBy = "creator") // Je me suis basé là-dessus, mais aucune idée de si c'est une bonne pratique :
+    private List<Chat> createdChats; // https://stackoverflow.com/questions/11843408/specifying-a-foreign-key-in-jpa
+
+    @OneToMany(mappedBy = "user")
+    private List<Invitation> invitations;
+
+    // ===================
+    // Getters and Setters
+    // ===================
+    public int getId() {
+        return id;
     }
 
-    public void setUsersId(int usersId) {
-        this.usersId = usersId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirstname() {
@@ -50,5 +70,45 @@ public class Users {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public List<Chat> getCreatedChats() {
+        return createdChats;
+    }
+
+    public void setCreatedChats(List<Chat> createdChats) {
+        this.createdChats = createdChats;
+    }
+
+    public List<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<Invitation> invitations) {
+        this.invitations = invitations;
     }
 }
