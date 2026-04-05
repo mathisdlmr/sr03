@@ -1,6 +1,5 @@
 package fr.utc.sr03.controller;
 
-
 import fr.utc.sr03.model.Users;
 import fr.utc.sr03.services.JakartaEmail;
 import fr.utc.sr03.services.UserService;
@@ -13,13 +12,11 @@ import java.util.List;
 @RequestMapping(path = "/api")
 public class ApiController {
 
-
     @Resource
     private UserService userService;
 
-
     @PostMapping(value = "/create")
-    public void create(){
+    public void create() {
         Users user = new Users();
         user.setFirstname("Cédric");
         user.setLastname("Martinet");
@@ -28,23 +25,20 @@ public class ApiController {
     }
 
     @GetMapping(value = "/liste")
-    public List<Users> getUsers(){
+    public List<Users> getUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping(value = "/oneUser/{id}")
-    public Users getUserById(@PathVariable int id){
+    public Users getUserById(@PathVariable int id) {
         return userService.getUserById(id);
     }
 
     @GetMapping(value = "/testmail")
-    public void testmail(){
+    public void testmail() {
 
-        //Test envoi Mail
+        // Test envoi Mail
         JakartaEmail jakartaEmail = new JakartaEmail();
         jakartaEmail.sendMail();
     }
-
-
-
 }

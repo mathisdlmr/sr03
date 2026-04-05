@@ -1,6 +1,5 @@
 package fr.utc.sr03.controller;
 
-
 import fr.utc.sr03.services.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ public class WebController {
     @Resource
     private UserService userService;
 
-
     @RequestMapping(value = "/index")
     public String index() {
         return "index";
@@ -21,10 +19,7 @@ public class WebController {
 
     @RequestMapping(value = "/users")
     public String users(Model model) {
-        model.addAttribute("myusers",userService.getAllUsers());
+        model.addAttribute("myusers", userService.getAllUsers());
         return "users";
     }
-
-
-
 }

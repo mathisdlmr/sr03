@@ -3,21 +3,21 @@ package fr.utc.sr03.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="Users")
+@Table(name = "Users")
 public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="userid")
+    @Column(name = "userid")
     private int usersId;
 
-    @Column(name="firstname")
+    @Column(name = "firstname")
     private String firstname;
 
-    @Column(name="lastname")
+    @Column(name = "lastname")
     private String lastname;
 
-    @Column(name="mail")
+    @Column(name = "mail")
     private String mail;
 
     public int getUsersId() {

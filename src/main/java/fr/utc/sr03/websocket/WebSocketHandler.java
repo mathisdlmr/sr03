@@ -32,31 +32,33 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String receivedMessage = (String) message.getPayload();
         MessageSocket messageSocket = mapper.readValue(receivedMessage, MessageSocket.class);
 
-        //Pour stocker le message dans l'historique
+        // Pour stocker le message dans l'historique
         messageSocketsHistory.add(messageSocket);
 
-        //Envoi du message à tous les connectés
-        this.broadcast(messageSocket.getUser()+ " : " + messageSocket.getMessage());
+        // Envoi du message à tous les connectés
+        this.broadcast(messageSocket.getUser() + " : " + messageSocket.getMessage());
 
     }
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws IOException {
-        //On stocke la session du client dans une liste
+        // On stocke la session du client dans une liste
         sessions.add(session);
         logger.info(session.getId());
 
-        //J'affiche l'historique du salon
-        for(MessageSocket messageSocket : messageSocketsHistory){
-            session.sendMessage(new TextMessage(messageSocket.getUser()+ " : " + messageSocket.getMessage()));
+        // J'affiche l'historique du salon
+        for (MessageSocket messageSocket : messageSocketsHistory) {
+            session.sendMessage(new TextMessage(messageSocket.getUser() + " : " + messageSocket.getMessage()));
         }
 
         logger.info("Connecté sur le " + this.nameChat);
 
     }
+
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
 
-        //Quand le client quitte, on retire sa session
+        // Quand le client quitte, on retire sa session
         sessions.remove(session);
         logger.info("Déconnecté du " + this.nameChat);
 

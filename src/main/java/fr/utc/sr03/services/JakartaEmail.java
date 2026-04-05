@@ -4,7 +4,6 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-
 import java.util.Properties;
 
 public class JakartaEmail {
@@ -12,7 +11,7 @@ public class JakartaEmail {
     public JakartaEmail() {
     }
 
-    public void sendMail(){
+    public void sendMail() {
         String to = "cedric.martinet@utc.fr";
         String from = "nepasrepondre@utc.fr";
         String host = "smtp1.utc.fr";
@@ -34,7 +33,5 @@ public class JakartaEmail {
             System.out.println(e.toString());
         }
     }
-
-
 
 }
