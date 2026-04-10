@@ -27,6 +27,22 @@ public class UserService {
         return userRepository.findByEmailAddress(emailAddress);
     }
 
+    public List<Users> getAdminUsersById(Integer userId, Boolean isAdmin) {
+        return userRepository.findAdminUsersById(userId, isAdmin);
+    }
+
+    public List<Users> getAdminUsersByEmail(String emailAddress, Boolean isAdmin) {
+        return userRepository.findAdminUsersByEmail(emailAddress, isAdmin);
+    }
+
+    public List<Users> getActiveUsersById(Integer userId, Boolean isActive) {
+        return userRepository.findActiveUsersById(userId, isActive);
+    }
+
+    public List<Users> getActiveUsersByEmail(String emailAddress, Boolean isActive) {
+        return userRepository.findActiveUsersByEmail(emailAddress, isActive);
+    }
+
     public List<Users> getAllUsers() {
         return userRepository.findAll();
     }
@@ -35,5 +51,7 @@ public class UserService {
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
+
+    public void deleteUserByEmail(String emailAddress) {userRepository.deleteUserByEmail(emailAddress);}
 
 }
