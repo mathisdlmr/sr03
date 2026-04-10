@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "invitation") // TODO : trouver un moyen de spécifier l'unicité du couple (chat, user)
+@Table(
+        name = "invitation",
+        uniqueConstraints = { @UniqueConstraint( columnNames = { "user_id", "chat_id"})}
+)
 public class Invitation {
 
     @Id
