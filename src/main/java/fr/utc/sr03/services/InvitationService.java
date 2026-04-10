@@ -1,0 +1,39 @@
+package fr.utc.sr03.services;
+
+import fr.utc.sr03.model.Invitation;
+import fr.utc.sr03.repository.InvitationRepository;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class InvitationService {
+
+    @Resource
+    private InvitationRepository invitationRepository;
+
+    // CREATE or UPDATE
+    public void saveInvitation(Invitation invitation) {
+        invitationRepository.save(invitation);
+    }
+
+    // READ
+    public Invitation getInvitationById(int id) {
+        return invitationRepository.findById(id).orElse(null);
+    }
+
+    public List<Invitation> getInvitationByUserId(int user_id) {
+        return invitationRepository.findByUserId(user_id);
+    }
+
+    public List<Invitation> getAllInvitations() {
+        return invitationRepository.findAll();
+    }
+
+    // DELETE
+    public void deleteInvitation(int id) {
+        invitationRepository.deleteById(id);
+    }
+
+}
