@@ -5,7 +5,7 @@
 | Date    | Sujet                                                  | On en est où ? |
 | ------- | ------------------------------------------------------ | -------------- |
 | 03-avr  | Présentation devoir 2 + conception uml                 | X              |
-| 10-avr  | Hibernate ORM + écriture des requêtes                  |                |
+| 10-avr  | Hibernate ORM + écriture des requêtes                  | X              |
 | 06-mai  | Controller et Rest Controller, Thymeleaf ( Vue Admin ) |                |
 | 15-mai  | Controller et Rest Controller, Thymeleaf ( Vue Admin ) |                |
 | 22-mai  | WebSocket                                              |                |
