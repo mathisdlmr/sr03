@@ -36,4 +36,6 @@ public class ChatService {
         chatRepository.deleteById(id);
     }
 
+    // OTHER METHODS
+    public boolean isOwner(int chat_id, int user_id)  { return chatRepository.isOwner(chat_id, user_id); }
 }

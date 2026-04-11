@@ -36,4 +36,6 @@ public class InvitationService {
         invitationRepository.deleteById(id);
     }
 
+    // OTHER METHODS
+    public boolean isInvited(int chat_id, int user_id)  { return invitationRepository.isInvited(chat_id, user_id); }
 }
