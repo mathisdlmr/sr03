@@ -33,9 +33,16 @@ public class    WebController {
     }
 
     @PostMapping("/login")
-    public String loginSubmit(HttpSession session) {
-        // TODO : logique de vérification des identificants par rapports aux params de la requete
-        // On récupère ensuite les infos du user dans la variable user pour la définir en session
+    public String loginSubmit(HttpSession session, Model model, @RequestParam String mail, @RequestParam String password,) {
+        Users user = userService.findByCredentials(mail, password);
+        if (user == null) {
+            model.addAttribute("error", "Identifiants incorrects.");
+            return "login";
+        }
+        if (!user.isActive()) {
+            model.addAttribute("error", "Votre compte est désactivé.");
+            return "login";
+        }
         session.setAttribute("user", user);
         return "redirect:/index";
     }

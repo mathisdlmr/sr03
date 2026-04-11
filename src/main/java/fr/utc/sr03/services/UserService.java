@@ -4,6 +4,7 @@ import fr.utc.sr03.model.Users;
 import fr.utc.sr03.repository.UserRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 
@@ -54,4 +55,13 @@ public class UserService {
 
     public void deleteUserByEmail(String emailAddress) {userRepository.deleteUserByEmail(emailAddress);}
 
+    // OTHER METHODS
+    public Users findByCredentials(String emailAddress, String password) {
+        Users user = userRepository.findByEmailAddress(emailAddress);
+        if(BCrypt.checkpw(password, user.getPassword())){ // Le plus adapté que j'ai trouvé : https://dzone.com/articles/hashing-passwords-in-java-with-bcrypt
+            return user;
+        } else {
+            return null;
+        }
+    }
 }
