@@ -1,15 +1,17 @@
 package fr.utc.sr03.services;
 
-import fr.utc.sr03.model.PasswordResetToken;
 import fr.utc.sr03.model.Users;
-import fr.utc.sr03.repository.UserRepository;
 import fr.utc.sr03.repository.PasswordResetTokenRepository;
+import fr.utc.sr03.repository.UserRepository;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,9 +19,6 @@ public class UserService {
 
     @Resource
     private UserRepository userRepository;
-
-    @Resource
-    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     // CREATE or UPDATE
     public void saveUser(Users user) {
@@ -35,20 +34,10 @@ public class UserService {
         return userRepository.findByEmailAddress(emailAddress);
     }
 
-    public List<Users> getAdminUsersById(Integer userId, Boolean isAdmin) {
-        return userRepository.findAdminUsersById(userId, isAdmin);
-    }
-
-    public List<Users> getAdminUsersByEmail(String emailAddress, Boolean isAdmin) {
-        return userRepository.findAdminUsersByEmail(emailAddress, isAdmin);
-    }
-
-    public List<Users> getActiveUsersById(Integer userId, Boolean isActive) {
-        return userRepository.findActiveUsersById(userId, isActive);
-    }
-
-    public List<Users> getActiveUsersByEmail(String emailAddress, Boolean isActive) {
-        return userRepository.findActiveUsersByEmail(emailAddress, isActive);
+    public Page<Users> getUsers(boolean active, String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("lastname").ascending());
+        String s = "%" + (search == null ? "" : search.trim()) + "%"; // Si on cherche un nom/prenom particulier, on trim la chaîne de caractères et on wrap avec des % pour faire un "LIKE" en SQL
+        return userRepository.findByActiveAndSearch(active, s, pageable);
     }
 
     public List<Users> getAllUsers() {
@@ -60,28 +49,28 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void deleteUserByEmail(String emailAddress) {userRepository.deleteUserByEmail(emailAddress);}
+    public void deleteUserByEmail(String emailAddress) {
+        userRepository.deleteUserByEmail(emailAddress);
+    }
 
     // OTHER METHODS
     public Users findByCredentials(String emailAddress, String password) {
         Users user = userRepository.findByEmailAddress(emailAddress);
-        if(BCrypt.checkpw(password, user.getPassword())){ // Le plus adapté que j'ai trouvé : https://dzone.com/articles/hashing-passwords-in-java-with-bcrypt
-            return user;
-        } else {
+        if (user == null) {
             return null;
         }
+        try {
+            if (BCrypt.checkpw(password, user.getPassword())) {
+                return user;
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la vérification du mdp de " + emailAddress + " : " + e.getMessage());
+        }
+        return null;
     }
 
-    public void createPasswordResetTokenForUser(Users user, String token) {
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setToken(token);
-        resetToken.setUser(user);
-
-        Calendar date = Calendar.getInstance();
-        long timeInSecs = date.getTimeInMillis();
-        Date expiryDate = new Date(timeInSecs + (5 * 60 * 1000));
-        resetToken.setExpiryDate(expiryDate);
-
-        passwordResetTokenRepository.save(resetToken);
+    public void changePassword(Users user, String newPassword) {
+        user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+        userRepository.save(user);
     }
 }

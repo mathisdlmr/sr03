@@ -7,10 +7,8 @@ import java.util.Date;
 @Entity
 public class PasswordResetToken { // Code récupéré et adapté de : https://www.baeldung.com/spring-security-registration-i-forgot-my-password
 
-    private static final int EXPIRATION = 5;
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String token;

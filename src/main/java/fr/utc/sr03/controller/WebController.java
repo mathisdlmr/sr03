@@ -2,14 +2,15 @@ package fr.utc.sr03.controller;
 
 import fr.utc.sr03.model.Users;
 import fr.utc.sr03.services.JakartaEmail;
+import fr.utc.sr03.services.PasswordResetTokenService;
 import fr.utc.sr03.services.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
