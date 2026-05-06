@@ -39,6 +39,6 @@ public class ApiController {
 
         // Test envoi Mail
         JakartaEmail jakartaEmail = new JakartaEmail();
-        jakartaEmail.sendMail();
+        jakartaEmail.sendMail("test.name@mail.com", "Subject", "Content");
     }
 }

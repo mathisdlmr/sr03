@@ -30,3 +30,5 @@ CREATE TABLE invitation (
 
     UNIQUE (user_id, chat_id)
 );
+
+INSERT INTO users VALUES (1,'Mathis', 'Delmaere', 'mathis.delmaere@etu.utc.fr','123456789',true, true);

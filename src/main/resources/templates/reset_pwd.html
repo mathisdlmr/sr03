@@ -19,6 +19,10 @@
                         <span class="mif-warning mr-2"></span>
                         <span th:text="${error}">Erreur</span>
                     </div>
+                    <div th:if="${success}" class="success mb-4">
+                        <span class="mif-mail mr-2"></span>
+                        <span th:text="${success}">Succès</span>
+                    </div>
                     <div class="border bd-blue p-6">
                         <form th:action="@{/resetpwd}" method="post">
                             <div class="form-group">

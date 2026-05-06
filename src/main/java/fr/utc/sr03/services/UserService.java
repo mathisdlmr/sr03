@@ -1,11 +1,15 @@
 package fr.utc.sr03.services;
 
+import fr.utc.sr03.model.PasswordResetToken;
 import fr.utc.sr03.model.Users;
 import fr.utc.sr03.repository.UserRepository;
+import fr.utc.sr03.repository.PasswordResetTokenRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,6 +17,9 @@ public class UserService {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     // CREATE or UPDATE
     public void saveUser(Users user) {
@@ -63,5 +70,18 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public void createPasswordResetTokenForUser(Users user, String token) {
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+
+        Calendar date = Calendar.getInstance();
+        long timeInSecs = date.getTimeInMillis();
+        Date expiryDate = new Date(timeInSecs + (5 * 60 * 1000));
+        resetToken.setExpiryDate(expiryDate);
+
+        passwordResetTokenRepository.save(resetToken);
     }
 }
