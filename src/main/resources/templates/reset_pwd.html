@@ -2,7 +2,7 @@
 <html lang="fr" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Renouveler mot de passe</title>
+    <title>Renouveler mot de passe - SR03</title>
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
     <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
 </head>
@@ -21,7 +21,7 @@
                         <span th:text="${error}">Erreur</span>
                     </div>
                     <div class="border bd-blue p-6">
-                        <form th:action="@{/resetpwd}" method="post">
+                        <form th:action="@{/reset_pwd}" method="post">
                             <div class="form-group">
                                 <label>Adresse e-mail</label>
                                 <input type="email" name="mail" data-role="input" placeholder="john.doe@mail.fr" required>
