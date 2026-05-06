@@ -14,6 +14,6 @@ public interface InvitationRepository extends JpaRepository<Invitation, Integer>
     List<Invitation> findByUserId(int creator_id);
 
     // Etant donné l'unicité sur le couple (chat_id, user_id), soit on récupère un résultat (1=true) soit aucun (0=false)
-    @Query("select count(i) from Invitation i where i.chat.id = ?1 and I.user.id = ?2")
+    @Query("select count(i) from Invitation i where i.chat.id = ?1 and i.user.id = ?2")
     Boolean isInvited(int chat_id, int user_id);
 }
