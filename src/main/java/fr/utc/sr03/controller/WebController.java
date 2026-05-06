@@ -1,6 +1,7 @@
 package fr.utc.sr03.controller;
 
 import fr.utc.sr03.model.Users;
+import fr.utc.sr03.services.JakartaEmail;
 import fr.utc.sr03.services.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
@@ -10,11 +11,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.UUID;
+
 @Controller
 public class WebController {
 
     @Resource
     private UserService userService;
+
+    @GetMapping("/unauthorized")
+    public String unauthorized() {
+        return "unauthorized";
+    }
 
     @GetMapping("/login")
     public String loginForm() {
@@ -44,6 +52,29 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @GetMapping("/reset_pwd")
+    public String resetPasswordForm() {
+        return "reset_pwd";
+    }
+
+    @PostMapping("/reset_pwd")
+    public String resetPasswordSubmit(Model model, @RequestParam String mail) {
+        Users user = userService.getUserByEmailAddress(mail);
+        if (user == null) {
+            model.addAttribute("error", "Cette adresse mail n'appartient à aucun.e utilisateur.ice");
+            return "reset_pwd";
+        }
+
+        String token = UUID.randomUUID().toString();
+        userService.createPasswordResetTokenForUser(user, token);
+
+        JakartaEmail jakartaEmail = new JakartaEmail();
+        jakartaEmail.sendMail(user.getMail(), "Mot de passe oublié", token);
+
+        model.addAttribute("success", "Un mail vous a été envoyé pour réinitialiser le mot de passe !");
+        return "reset_pwd";
+    }
+
     @GetMapping("/")
     public String admin(HttpSession session) {
         Users user = (Users) session.getAttribute("user");
@@ -57,10 +88,5 @@ public class WebController {
         // TODO : ici faut faire de la pagination sur les users et chats ...
 
         return "admin";
-    }
-
-    @GetMapping("/unauthorized")
-    public String unauthorized() {
-        return "unauthorized";
     }
 }
