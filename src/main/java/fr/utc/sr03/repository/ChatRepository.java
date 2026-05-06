@@ -13,6 +13,9 @@ public interface ChatRepository extends JpaRepository<Chat, Integer> {
     @Query("select c from Chat c where c.creator.id = ?1")
     List<Chat> findByCreatorId(int creator_id);
 
+    @Query("select c from Chat c Join Invitation i where i.user.id = ?1")
+    List<Chat> findByInvitationUserId(int user_id);
+
     // Etant donné l'unicité sur l'id chat_id, soit on récupère un résultat (1=true) soit aucun (0=false)
     @Query("select count(c) from Chat c where c.id = ?1 and c.creator.id = ?2")
     Boolean isOwner(int chat_id, int user_id);

@@ -27,6 +27,8 @@ public class ChatService {
         return chatRepository.findByCreatorId(creator_id);
     }
 
+    public List<Chat> getChatsByInvitations(int user_id) { return chatRepository.findByInvitationUserId(user_id); }
+
     public List<Chat> getAllChats() {
         return chatRepository.findAll();
     }

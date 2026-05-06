@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-public class    WebController {
+public class WebController {
 
     @Resource
     private UserService userService;
@@ -33,7 +33,7 @@ public class    WebController {
     }
 
     @PostMapping("/login")
-    public String loginSubmit(HttpSession session, Model model, @RequestParam String mail, @RequestParam String password,) {
+    public String loginSubmit(HttpSession session, Model model, @RequestParam String mail, @RequestParam String password) {
         Users user = userService.findByCredentials(mail, password);
         if (user == null) {
             model.addAttribute("error", "Identifiants incorrects.");
@@ -61,7 +61,7 @@ public class    WebController {
         }
 
         List<Chat> ownedChats   = chatService.getChatByCreatorId(user.getId());
-        List<Chat> invitedChats = chatService.getChatsByInvitation(user.getId()); // TODO : j'ai la flemme pour l'instant de faire celle là
+        List<Chat> invitedChats = chatService.getChatsByInvitations(user.getId());
 
         model.addAttribute("user", user);
         model.addAttribute("ownedChats", ownedChats);
