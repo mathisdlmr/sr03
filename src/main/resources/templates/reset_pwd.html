@@ -2,7 +2,7 @@
 <html lang="fr" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login — SR03</title>
+    <title>Renouveler mot de passe</title>
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
     <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
 </head>
@@ -12,37 +12,26 @@
             <div class="row">
                 <div class="cell-md-4 offset-md-4">
                     <div class="text-center mb-6">
-                        <h2 class="text-bold mt-2">Devoir 2 SR03</h2>
-                        <p class="text-muted">Connectez-vous pour accéder à vos chats</p>
+                        <h2 class="text-bold mt-2">Renouveler mot de passe</h2>
+                        <p class="text-muted">Entrez l'adresse email associé à votre compte
+                            pour modifier votre mot de passe.</p>
                     </div>
                     <div th:if="${error}" class="alert alert-warning mb-4">
                         <span class="mif-warning mr-2"></span>
                         <span th:text="${error}">Erreur</span>
                     </div>
                     <div class="border bd-blue p-6">
-                        <form th:action="@{/login}" method="post">
+                        <form th:action="@{/resetpwd}" method="post">
                             <div class="form-group">
                                 <label>Adresse e-mail</label>
                                 <input type="email" name="mail" data-role="input" placeholder="john.doe@mail.fr" required>
                             </div>
-                            <div class="form-group mt-4">
-                                <label>Mot de passe</label>
-                                <input type="password" name="password" data-role="input" placeholder="*********" required>
-                            </div>
                             <div class="form-group mt-6">
                                 <button type="submit" class="button bg-blue fg-white text-bold w-100">
                                     <span class="mif-enter mr-2"></span>
-                                    Se connecter
+                                    Réinitialiser le mot de passe
                                 </button>
                             </div>
-                            <form th:action="@{/login}" method="post">
-                                <div class="form-group mt-6">
-                                    <button type="submit" class="button bg-blue fg-white text-bold w-100">
-                                        <span class="mif-enter mr-2"></span>
-                                        Mot de passe oublié ?
-                                    </button>
-                                </div>
-                            </form>
                         </form>
                     </div>
                 </div>
