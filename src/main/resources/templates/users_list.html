@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admin - SR03</title>
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/stylesheets/styles.css}" media="screen, projection" />
+    <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
+</head>
+<body>
+    <div class="navbar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <ul class="nav-links" style="display: flex; list-style: none; padding: 0; margin: 0; gap: 15px; flex-wrap: wrap;">
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/create}">Création d’un nouvel utilisateur</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/listuser}">Liste des utilisateurs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/listinactiveuser}">Liste des comptes d’utilisateurs désactivés</a>
+            </li>
+        </ul>
+    </div>
+    Page admin
+    <main>
+        <div class="container mt-10">
+            <div class="row">
+                <div class="text-center mb-6">
+                    <h2 class="text-bold mt-2">Liste des utilisateurs</h2>
+                </div>
+
+                <!-- For each Utilisateur : -->
+                <!--                <div class="cell-md-4 offset-md-4">-->
+                <div class="border bd-blue p-6">
+                    <h3>Nom Prenom</h3>
+                    <div class="form-group mt-6">
+                        <button type="submit" class="button bg-blue fg-white text-bold w-100">
+                            <span class="mif-enter mr-2"></span>
+                            <!-- check pour activer ou désactiver l'utilisateur -->
+                            Activer/desactiver
+                        </button>
+                    </div>
+                    <div class="form-group mt-6">
+                        <button type="submit" class="button bg-blue fg-white text-bold w-100">
+                            <span class="mif-enter mr-2"></span>
+                            Editer
+                        </button>
+                    </div>
+                    <div class="form-group mt-6">
+                        <button type="submit" class="button bg-blue fg-white text-bold w-100">
+                            <span class="mif-enter mr-2"></span>
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
