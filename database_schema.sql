@@ -31,4 +31,4 @@ CREATE TABLE invitation (
     UNIQUE (user_id, chat_id)
 );
 
-INSERT INTO users VALUES (1,'Mathis', 'Delmaere', 'mathis.delmaere@etu.utc.fr','123456789',true, true);
+INSERT INTO users VALUES (1,'Mathis', 'Delmaere', 'mathis.delmaere@etu.utc.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',true, true); /* password 123456789 */

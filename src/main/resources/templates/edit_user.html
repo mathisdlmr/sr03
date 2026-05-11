@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Éditer un utilisateur — SR03</title>
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <link rel="stylesheet" th:href="@{/stylesheets/styles.css}">
+    <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
+</head>
+<body>
+    <div class="navbar">
+        <ul class="nav-links">
+            <li><a class="nav-link" th:href="@{/listuser}">Accueil</a></li>
+            <li><a class="nav-link" th:href="@{/create}">Nouveau utilisateur</a></li>
+            <li><a class="nav-link" th:href="@{/listinactiveuser}">Utilisateurs désactivés</a></li>
+        </ul>
+        <div>
+            <span th:text="${session.user.firstname + ' ' + session.user.lastname}"></span>
+            <a th:href="@{/logout}" class="button bg-red fg-white">Déconnexion</a>
+        </div>
+    </div>
+
+    <main class="container mt-6">
+        <div class="row">
+            <div class="cell-md-6 offset-md-3">
+                <h2>Éditer l'utilisateur</h2>
+                <div class="border bd-blue p-6">
+                    <form th:action="@{/edituser/{id}(id=${editedUser.id})}" method="post">
+                        <div class="form-group">
+                            <label>Prénom <span class="fg-red">*</span></label>
+                            <input type="text" name="firstname" data-role="input" th:value="${editedUser.firstname}" required minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ\-\s]+" title="Lettres, espaces et tirets uniquement">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label>Nom <span class="fg-red">*</span></label>
+                            <input type="text" name="lastname" data-role="input" th:value="${editedUser.lastname}" required minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ\-\s]+" title="Lettres, espaces et tirets uniquement">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label>Adresse e-mail <span class="fg-red">*</span></label>
+                            <input type="email" name="mail" data-role="input" th:value="${editedUser.mail}" required maxlength="100">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label>Nouveau mot de passe <small class="text-muted">(laisser vide pour ne pas changer)</small></label>
+                            <input type="password" name="password" data-role="input" placeholder="*********" minlength="8">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label>Compte administrateur</label>
+                            <input type="checkbox" name="admin" value="true" th:checked="${editedUser.admin}">
+                        </div>
+                        <div class="form-group mt-6">
+                            <button type="submit" class="button bg-blue fg-white text-bold">
+                                Enregistrer
+                            </button>
+                            <a th:href="@{/listuser}" class="button">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
