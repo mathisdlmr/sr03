@@ -1,5 +1,6 @@
 package fr.utc.sr03.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -27,6 +28,7 @@ public class Chat {
 
     @ManyToOne
     @JoinColumn(name = "creator_id", nullable = false)
+    @JsonIgnore // to test postman, je pense pas qu'on doit le laisser
     private Users creator;
 
     @OneToMany(mappedBy = "chat")

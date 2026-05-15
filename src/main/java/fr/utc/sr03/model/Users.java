@@ -1,5 +1,6 @@
 package fr.utc.sr03.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class Users {
     private boolean active;
 
     @OneToMany(mappedBy = "creator") // Je me suis basé là-dessus, mais aucune idée de si c'est une bonne pratique :
+    @JsonIgnore // to test postman, je pense pas qu'on doit le laisser
     private List<Chat> createdChats; // https://stackoverflow.com/questions/11843408/specifying-a-foreign-key-in-jpa
 
     @OneToMany(mappedBy = "user")
