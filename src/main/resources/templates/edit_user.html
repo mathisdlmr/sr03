@@ -8,17 +8,25 @@
     <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
 </head>
 <body>
-    <div class="navbar">
-        <ul class="nav-links">
-            <li><a class="nav-link" th:href="@{/listuser}">Accueil</a></li>
-            <li><a class="nav-link" th:href="@{/create}">Nouveau utilisateur</a></li>
-            <li><a class="nav-link" th:href="@{/listinactiveuser}">Utilisateurs désactivés</a></li>
+    <nav data-role="appbar" data-expand-point="md" class="border-bottom bd-default">
+        <ul class="app-bar-menu">
+            <li><a th:href="@{/listuser}">Accueil</a></li>
+            <li><a th:href="@{/create}">Nouveau utilisateur</a></li>
+            <li><a th:href="@{/listinactiveuser}">Utilisateurs désactivés</a></li>
         </ul>
-        <div>
-            <span th:text="${session.user.firstname + ' ' + session.user.lastname}"></span>
-            <a th:href="@{/logout}" class="button bg-red fg-white">Déconnexion</a>
+
+        <div class="app-bar-item-static mx-auto">
+            <p th:text="${session.user.firstname + ' ' + session.user.lastname}"></p>
         </div>
-    </div>
+
+        <div class="app-bar-item-static ml-auto">
+            <a th:href="@{/logout}">
+                <button class="small ml-1 alert">
+                    Déconnexion
+                </button>
+            </a>
+        </div>
+    </nav>
 
     <main class="container mt-6">
         <div class="row">
