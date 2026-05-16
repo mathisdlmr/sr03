@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Créer un utilisateur — SR03</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/icons.css"/>
     <link rel="stylesheet" th:href="@{/stylesheets/styles.css}">
     <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
 </head>
 <body>
-    <nav data-role="appbar" data-expand-point="md" class="border-bottom bd-default">
+    <nav data-role="appbar" data-expand-point="md" class="border border-size-1 bd-gray shadow-normal">
         <ul class="app-bar-menu">
             <li><a th:href="@{/listuser}">Accueil</a></li>
             <li><a th:href="@{/create}">Nouveau utilisateur</a></li>
@@ -30,37 +34,39 @@
 
     <main class="container mt-6">
         <div class="row">
-            <div class="cell-md-6 offset-md-3">
+            <div class="text-center cell-md-6 offset-md-3">
                 <h2>Créer un nouvel utilisateur</h2>
-                <div th:if="${error}" class="alert alert-warning mb-4">
+                <div th:if="${error}" class="alert alert-warning border-radius-2 mb-4">
                     <span th:text="${error}"></span>
                 </div>
-                <div th:if="${success}" class="alert alert-success mb-4">
+                <div th:if="${success}" class="alert alert-success border-radius-2 mb-4">
                     <span th:text="${success}"></span>
                 </div>
-                <div class="border bd-blue p-6">
+                <div class="border border-size-1 border-radius-10 bd-blue p-8">
                     <form th:action="@{/create}" method="post" onsubmit="return validateForm()">
                         <div class="form-group">
-                            <label>Prénom <span class="fg-red">*</span></label>
+                            <label class="label-for-input">Prénom <span class="fg-red">*</span></label>
                             <input type="text" name="firstname" data-role="input" placeholder="Jean" required minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ\-\s]+" title="Lettres, espaces et tirets uniquement">
                         </div>
                         <div class="form-group mt-4">
-                            <label>Nom <span class="fg-red">*</span></label>
+                            <label class="label-for-input">Nom <span class="fg-red">*</span></label>
                             <input type="text" name="lastname" data-role="input" placeholder="Dupont" required minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ\-\s]+" title="Lettres, espaces et tirets uniquement">
                         </div>
                         <div class="form-group mt-4">
-                            <label>Adresse e-mail <span class="fg-red">*</span></label>
-                            <input type="email" name="mail" data-role="input" placeholder="jean.dupont@mail.fr" required maxlength="100">
+                            <label class="label-for-input">Adresse e-mail <span class="fg-red">*</span></label>
+                            <input type="email" name="mail" data-role="input" placeholder="jean.dupont@mail.fr" data-prepend="&lt;span class='mif-person'&gt;" required maxlength="100">
                         </div>
                         <div class="form-group mt-4">
-                            <label> Compte administrateur</label>
-                            <input type="checkbox" name="admin" value="true">
+                            <label class="label-for-input mb-2">Compte administrateur ?</label>
+                            <input type="checkbox" data-role="checkbox" name="admin" value="true">
                         </div>
-                        <p class="text-muted mt-4">
-                            Un mot de passe temporaire sera généré automatiquement et envoyé par email.
-                        </p>
+                        <div class="text-center mt-4">
+                            <p class="text-muted">
+                                Un mot de passe temporaire sera généré automatiquement et envoyé par email.
+                            </p>
+                        </div>
                         <div class="form-group mt-4">
-                            <button type="submit" class="button bg-blue fg-white text-bold w-100">
+                            <button type="submit" class="button info bg-blue fg-white text-bold w-100">
                                 Créer l'utilisateur
                             </button>
                         </div>

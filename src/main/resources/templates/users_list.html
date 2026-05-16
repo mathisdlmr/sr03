@@ -2,14 +2,17 @@
 <html lang="fr" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-
     <title>Panel Admin — SR03</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/icons.css"/>
     <link rel="stylesheet" th:href="@{/stylesheets/styles.css}">
     <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
 </head>
 <body>
-    <nav data-role="appbar" data-expand-point="md" class="border-bottom bd-default">
+    <nav data-role="appbar" data-expand-point="md" class="border border-size-1 bd-gray shadow-normal">
         <ul class="app-bar-menu">
             <li><a th:classappend="${!inactive ? ' active' : ''}" th:href="@{/listuser}">Accueil</a></li>
             <li><a th:href="@{/create}">Nouveau utilisateur</a></li>
