@@ -117,6 +117,12 @@ public class WebController {
         return "reset_pwd";
     }
 
+//    @GetMapping("/resetpwd_test")
+//    public String resetPasswordFormTest(Model model) {
+//        model.addAttribute("email", "my@email");
+//        return "reset_pwd";
+//    } // Test vue html, to delete
+
     @PostMapping("/resetpwd")
     public String resetPasswordSubmit(@RequestParam String token,  @RequestParam String password,  Model model) {
         if (!passwordResetTokenService.validatePasswordResetToken(token)) {

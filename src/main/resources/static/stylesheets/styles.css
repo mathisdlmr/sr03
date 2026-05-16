@@ -1,3 +1,7 @@
+:root {
+    --font-name: "DM Sans",sans-serif;
+}
+
 .navbar {
     padding: 10px 20px;
     background-color: #668991;

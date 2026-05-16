@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Login — SR03</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/icons.css"/>
     <link rel="stylesheet" th:href="@{/stylesheets/styles.css}">
     <script src="https://cdn.metroui.org.ua/current/metro.js" defer></script>
 </head>
 <body>
     <main>
-        <div class="container mt-10">
+        <div class="container mt-20">
             <div class="row">
-                <div class="cell-md-4 offset-md-4">
-                    <div class="text-center mb-6">
-                        <h2 class="text-bold mt-2">Panel Admin</h2>
-                        <p class="text-muted">Connectez-vous pour accéder au panel admin</p>
-                    </div>
-                    <div th:if="${error}" class="alert alert-warning mb-4">
-                        <span class="mif-warning mr-2"></span>
-                        <span th:text="${error}">Erreur</span>
-                    </div>
-                    <div class="border bd-blue p-6">
+                <div class="cell-md-6 offset-md-3">
+                    <div class="border border-size-1 border-radius-10 bd-blue p-8">
+                        <div class="text-center mb-6">
+                            <h2 class="text-bold mt-2">Panel Admin</h2>
+                            <p class="text-muted">Connectez-vous pour accéder au panel admin</p>
+                        </div>
+                        <div th:if="${error}" class="alert border-radius-2 alert-warning mb-4">
+                            <span class="mif-warning mx-2"></span>
+                            <span th:text="${error}">Erreur</span>
+                        </div>
+
                         <form th:action="@{/login}" method="post">
                             <div class="form-group">
-                                <label>Adresse e-mail</label>
-                                <input type="email" name="mail" data-role="input" placeholder="john.doe@mail.fr" required>
+                                <label class="label-for-input">Adresse e-mail</label>
+                                <input type="email" name="mail" data-role="input" placeholder="john.doe@mail.fr" data-prepend="&lt;span class='mif-person'&gt;" required>
                             </div>
                             <div class="form-group mt-4">
-                                <label>Mot de passe</label>
-                                <input type="password" name="password" data-role="input" placeholder="*********" required>
+                                <label class="label-for-input">Mot de passe</label>
+                                <input type="password" name="password" data-role="input" placeholder="*********" data-prepend="<span class='mif-lock'></span>" data-reveal-button-icon="<span class='mif-eye mif-2x'></span>" required>
                             </div>
                             <div class="form-group mt-6">
-                                <button type="submit" class="button bg-blue fg-white text-bold w-100">
+                                <button type="submit" class="button info bg-blue fg-white text-bold w-100">
                                     <span class="mif-enter mr-2"></span>
                                     Se connecter
                                 </button>
@@ -41,6 +46,7 @@
                             <a th:href="@{/askresetpwd}">Mot de passe oublié ?</a>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
