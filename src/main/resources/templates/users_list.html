@@ -32,15 +32,23 @@
         </div>
     </nav>
 
-    <main class="container mt-6">
+    <main class="container mt-8">
         <h2 th:text="${inactive ? 'Utilisateurs désactivés' : 'Liste des utilisateurs'}">Liste des utilisateurs</h2>
-        <form th:action="${listUrl}" method="get">
-            <input type="text" name="search" th:value="${search}" placeholder="Rechercher par nom, prénom ou email...">
-            <button type="submit" class="button bg-blue fg-white">Rechercher</button>
-            <a th:href="${listUrl}" class="button">Réinitialiser</a>
+        <form th:action="${listUrl}" class="row gap-1 my-4" method="get">
+            <div class="cell-md-8">
+                <input type="text" class="w-100" name="search" th:value="${search}" placeholder="Rechercher par nom, prénom ou email...">
+            </div>
+            <div class="cell-md-2">
+                <button type="submit" class="button info bg-blue fg-white w-100">Rechercher</button>
+            </div>
+            <div class="cell-md-2">
+                <a th:href="${listUrl}" class="button w-100">Réinitialiser</a>
+            </div>
         </form>
-        <table class="table striped border" th:if="${not #lists.isEmpty(users)}">
-            <thead>
+
+        <div class="row mt-6">
+            <table class="table striped border row-hover row-border" th:if="${not #lists.isEmpty(users)}">
+                <thead>
                 <tr>
                     <th>Nom</th>
                     <th>Prénom</th>
@@ -48,8 +56,8 @@
                     <th>Rôle</th>
                     <th>Actions</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr th:each="u : ${users}">
                     <td th:text="${u.lastname}"></td>
                     <td th:text="${u.firstname}"></td>
@@ -59,20 +67,21 @@
                         <span th:unless="${u.admin}">Utilisateur</span>
                     </td>
                     <td>
-                        <a th:href="@{/edituser/{id}(id=${u.id})}" class="button mini bg-dark fg-white">Éditer</a>
+                        <a th:href="@{/edituser/{id}(id=${u.id})}" class="button dark mini bg-dark fg-white w-100 my-1">Éditer</a>
                         <form th:action="@{/toggleuser/{id}(id=${u.id})}" method="post">
                             <input type="hidden" name="returnUrl" th:value="${listUrl}">
-                            <button type="submit" th:text="${u.active ? 'Désactiver' : 'Activer'}" th:class="${u.active ? 'button mini bg-orange fg-white' : 'button mini bg-green fg-white'}"> </button>
+                            <button type="submit" th:text="${u.active ? 'Désactiver' : 'Activer'}" th:class="${u.active ? 'button warning mini bg-orange fg-white w-100 my-1' : 'button success mini bg-green fg-white w-100 my-1'}"> </button>
                         </form>
                         <form th:action="@{/deleteuser/{id}(id=${u.id})}" method="post" onsubmit="return confirm('Supprimer définitivement cet utilisateur ?')">
                             <input type="hidden" name="returnUrl" th:value="${listUrl}">
-                            <button type="submit" class="button mini bg-red fg-white">Supprimer</button>
+                            <button type="submit" class="button primary mini bg-red fg-white w-100 my-1">Supprimer</button>
                         </form>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <div th:if="${#lists.isEmpty(users)}" class="alert alert-info mt-4">
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${#lists.isEmpty(users)}" class="alert border-radius-2 alert-info mt-4 pl-2">
             Aucun utilisateur trouvé.
         </div>
         <div th:if="${totalPages > 1}">
