@@ -9,9 +9,11 @@ import fr.utc.sr03.services.InvitationService;
 import fr.utc.sr03.services.JakartaEmail;
 import fr.utc.sr03.services.UserService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import org.hibernate.grammars.hql.HqlParser;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -58,8 +60,29 @@ public class ApiController {
 
     // --- User ---
     // login
+    @PostMapping("/loginuser")
+    public Users loginUserSubmit(HttpSession session, @RequestParam String mail, @RequestParam String password) {
+        Users user = userService.findByCredentials(mail, password);
+        if (user == null) {
+            //model.addAttribute("error", "Identifiants incorrects.");
+            return null; // ou codes pour def type d'erreur
+        }
+        if (!user.isActive()) {
+            //model.addAttribute("error", "Votre compte est désactivé.");
+            return null;
+        }
+        session.setAttribute("user", user);
+        return user;
+    }
 
-    // sign in
+    // logout ?
+    @PostMapping("/logout")
+    public Boolean logout(HttpSession session) {
+        session.invalidate();
+        return true;
+    }
+
+    // sign in (on n'utilise plus l'envoit des mails)
 
     // edit profile
 
@@ -68,10 +91,9 @@ public class ApiController {
     @PostMapping(value = "/createchat")
     public boolean createChat(@RequestBody ChatDTO chatDTO) {
         // to test in postman : Body->raw JSON
-
-        System.out.println(chatDTO.getTitle());
-        System.out.println(chatDTO.getDescription());
-        System.out.println(chatDTO.getCreatorId());
+        //System.out.println(chatDTO.getTitle());
+        //System.out.println(chatDTO.getDescription());
+        //System.out.println(chatDTO.getCreatorId());
 
         Chat chat = new Chat();
 
@@ -86,12 +108,12 @@ public class ApiController {
         chat.setDescription(chatDTO.getDescription());
 
         Timestamp startDate = Timestamp.valueOf(LocalDateTime.now());
-        System.out.println("Timestamp today : " + startDate);
+        //System.out.println("Timestamp today : " + startDate);
         chat.setCreatedAt(startDate);
 
         // ToDo : define end date (-> timestamp) or smtg in requestbody
         Timestamp endDate = Timestamp.valueOf(LocalDateTime.now().plusDays(10));
-        System.out.println("Timestamp in 10 days : " + endDate);
+        //System.out.println("Timestamp in 10 days : " + endDate);
         chat.setEndsAt(endDate);
 
         chatService.saveChat(chat);
@@ -174,6 +196,6 @@ public class ApiController {
     }
 
     // chat window
-        // send message in chat
+        // send message in chat -> websocket
         // list users connected to the chat
 }
