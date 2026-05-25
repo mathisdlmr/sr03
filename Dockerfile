@@ -15,7 +15,13 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y sqlite3
+
 COPY --from=builder /app/target/*.jar app.jar
+
+COPY database_schema.sql .
+
+RUN sqlite3 database.sqlite < database_schema.sql
 
 EXPOSE 8080
 
