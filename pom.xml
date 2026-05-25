@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.utc.dsi.pia</groupId>
-    <artifactId>Devoir2</artifactId>
+    <artifactId>devoir-2-sr03</artifactId>
     <version>1.0.0</version>
-
 
     <properties>
         <maven.compiler.source>24</maven.compiler.source>
@@ -83,4 +82,12 @@
             <version>0.4</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
