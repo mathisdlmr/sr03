@@ -1,71 +1,38 @@
 import { useEffect, useState, useRef } from 'react'
-import './App.css'
+
+import "@olton/metroui/lib/metro.css";
+import "@olton/metroui/lib/icons.css";
+import "@olton/metroui/lib/metro.js";
 
 function App() {
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
-
-  //  Utilisation de useRef à la place de useState pour le WebSocket
-  const wsRef = useRef(null);
-
-  useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:8080/salon');
-
-    websocket.onopen = () => {
-      console.log('WebSocket is connected');
-    };
-
-    websocket.onmessage = (evt) => {
-      const message = evt.data;
-      setMessages((prevMessages) => [...prevMessages, message]);
-    };
-
-    websocket.onclose = () => {
-      console.log('WebSocket is closed');
-    };
-
-    // On stocke la connexion dans le ref (pas de render provoqué)
-    wsRef.current = websocket;
-
-    return () => {
-      websocket.close();
-    };
-  }, []);
-
-  const sendMessage = () => {
-    // On accède au WebSocket via wsRef.current
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({
-        user: 'Cédric',
-        message: message,
-      }));
-
-      setMessage('');
-    } else {
-      console.warn("Le WebSocket n'est pas prêt ou est déconnecté.");
+    // TODO : fetch user info or use context to get user info
+    const User = {
+        id: 1,
+        firstname: "Mathis",
+        lastname: "Delmaere",
+        mail: "mathis.delmaere@etu.utc.fr"
     }
-  };
-
-  const handleInputChange = (event) => {
-    setMessage(event.target.value);
-  };
 
   return (
-      <div className="App">
-        <header className="App-header">
-          <h1>
-            Exemple SR03 - Cédric Martinet
-          </h1>
-          {messages.map((msg, index) => <p key={index}>{msg}</p>)}
-          <input
-              type="text"
-              value={message}
-              onChange={handleInputChange}
-          />
-          <br/>
-          <button onClick={sendMessage}>
-            Envoyer le message
-          </button>
+      <div>
+        <header class="border border-size-1 bd-gray shadow-normal" data-role="appbar" data-expand-point="md">
+            <ul class="app-bar-menu">
+                <li><a>Accueil</a></li>
+                <li><a>Planifier une discussion</a></li>
+                <li><a>Mes salons de discussion</a></li>
+                <li><a>Mes invitations</a></li>
+            </ul>
+            <div class="app-bar-item-static mx-auto">
+                <p>{User.firstname} {User.lastname}</p>
+            </div>
+
+            <div class="app-bar-item-static ml-auto">
+                <a>
+                    <button class="small ml-1 alert">
+                        Déconnexion
+                    </button>
+                </a>
+            </div>
         </header>
       </div>
   );

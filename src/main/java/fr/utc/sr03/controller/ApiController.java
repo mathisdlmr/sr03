@@ -198,4 +198,5 @@ public class ApiController {
     // chat window
         // send message in chat -> websocket
         // list users connected to the chat
+        // keep timestamp of each message on screen ("x minutes ago") -> to do in frontend
 }
