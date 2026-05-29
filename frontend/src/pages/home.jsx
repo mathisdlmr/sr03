@@ -4,15 +4,7 @@ import "@olton/metroui/lib/metro.css";
 import "@olton/metroui/lib/icons.css";
 import "@olton/metroui/lib/metro.js";
 
-function App() {
-    // TODO : fetch user info or use context to get user info
-    const User = {
-        id: 1,
-        firstname: "Mathis",
-        lastname: "Delmaere",
-        mail: "mathis.delmaere@etu.utc.fr"
-    }
-
+function HomeScreen({ user }) {
   return (
       <div>
         <header class="border border-size-1 bd-gray shadow-normal" data-role="appbar" data-expand-point="md">
@@ -38,4 +30,4 @@ function App() {
   );
 }
 
-export default App;
+export default HomeScreen;
