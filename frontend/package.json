@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@olton/metroui": "^5.1.20",
+    "axios": "^1.16.1",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.16.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
