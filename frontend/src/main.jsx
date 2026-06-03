@@ -1,34 +1,18 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import { UserProvider } from './helpers/userContext';
-import HomeScreen from './pages/home';
-import LoginScreen from './pages/login';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import '@olton/metroui/lib/metro.css';
+import '@olton/metroui/lib/icons.css';
+import '@olton/metroui/lib/metro.js';
+
+import './index.css';
+import { AuthProvider } from './contexts/AuthContext';
+import App from './App';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <UserProvider>
+    <AuthProvider>
       <App />
-    </UserProvider>
-  </StrictMode>,
-)
-
-function App() {
-  // const { user } = useUser();
-  const user = {
-    id: 1,
-    firstname: "Mathis",
-    lastname: "Delmaere",
-    mail: "mathis.delmaere@etu.utc.fr"
-  };
-  
-  return (
-    <>
-      {user ? (
-        <HomeScreen user={user} />
-      ) : (
-        <LoginScreen />
-      )}
-    </>
-  );
-}
+    </AuthProvider>
+  </StrictMode>
+);
