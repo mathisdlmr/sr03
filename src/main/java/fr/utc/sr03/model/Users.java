@@ -24,6 +24,7 @@ public class Users {
     private String mail;
 
     @Column(name = "password", nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(name = "admin")
@@ -32,11 +33,12 @@ public class Users {
     @Column(name = "active")
     private boolean active;
 
-    @OneToMany(mappedBy = "creator") // Je me suis basé là-dessus, mais aucune idée de si c'est une bonne pratique :
-    @JsonIgnore // to test postman, je pense pas qu'on doit le laisser
-    private List<Chat> createdChats; // https://stackoverflow.com/questions/11843408/specifying-a-foreign-key-in-jpa
+    @OneToMany(mappedBy = "creator")
+    @JsonIgnore
+    private List<Chat> createdChats;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Invitation> invitations;
 
     // ===================
@@ -112,5 +114,13 @@ public class Users {
 
     public void setInvitations(List<Invitation> invitations) {
         this.invitations = invitations;
+    }
+
+    // On définit un DTO pour choisir expréssément les champs que l'on veut exposer de l'entité Users à travers l'API
+    // (notamment pour ne pas exposer le mot de passe hashé, ou tout autre champ qui serait ajouté à postériori)
+    public record UserDTO(int id, String firstname, String lastname, String mail, boolean admin) {
+        public static UserDTO from(Users user) {
+            return new UserDTO(user.getId(), user.getFirstname(), user.getLastname(), user.getMail(), user.isAdmin());
+        }
     }
 }
