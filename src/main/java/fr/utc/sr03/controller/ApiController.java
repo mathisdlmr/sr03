@@ -187,29 +187,4 @@ public class ApiController {
 
         return ResponseEntity.ok(Map.of("success", true));
     }
-
-    // ----- TODO : remove ----- //
-
-    @GetMapping("/liste")
-    public List<Users.UserDTO> getUsers() {
-        return userService.getAllUsers().stream()
-                .map(Users.UserDTO::from)
-                .toList();
-    }
-
-    @GetMapping("/oneUser/{id}")
-    public Users.UserDTO getUserById(@PathVariable int id) {
-        Users user = userService.getUserById(id);
-        return Users.UserDTO.from(user);
-    }
-
-    @GetMapping("/listechatsowned/{id}")
-    public List<Chat> getOwnedChatsById(@PathVariable int id) {
-        return chatService.getChatByCreatorId(id);
-    }
-
-    @GetMapping("/listechatsinvited/{id}")
-    public List<Chat> getInvitedChatsById(@PathVariable int id) {
-        return chatService.getChatsByInvitations(id);
-    }
 }
