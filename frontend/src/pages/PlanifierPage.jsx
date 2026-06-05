@@ -33,26 +33,28 @@ export default function PlanifierPage() {
   };
 
   return (
-    <div>
-      <div>
-        <h1>Planifier une discussion</h1>
-        <p>Créez un nouveau salon de discussion.</p>
+    <div className="row">
+      <div className="cell-md-8 offset-md-2">
+        <h1 className="text-bold mb-2">Planifier une discussion</h1>
+        <p className="text-muted mb-6">Créez un nouveau salon de discussion.</p>
 
-        <div>
+        <div className="border border-size-1 border-radius-6 p-8 shadow-normal">
           {error && (
-            <div>
+            <div className="alert alert-warning border-radius-2 mb-4">
+              <span className="mif-warning mx-2" />
               {error}
             </div>
           )}
           {success && (
-            <div>
+            <div className="alert alert-success border-radius-2 mb-4">
+              <span className="mif-checkmark mx-2" />
               {success}
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
-            <div>
-              <label>Titre du salon *</label>
+            <div className="form-group">
+              <label className="label-for-input">Titre du salon *</label>
               <input
                 id="chat-title"
                 type="text"
@@ -64,8 +66,8 @@ export default function PlanifierPage() {
               />
             </div>
 
-            <div>
-              <label>Description</label>
+            <div className="form-group mt-4">
+              <label className="label-for-input">Description</label>
               <textarea
                 id="chat-description"
                 data-role="textarea"
@@ -77,9 +79,10 @@ export default function PlanifierPage() {
               />
             </div>
 
-            <div>
+            <div className="form-group mt-6 d-flex flex-justify-between">
               <button
                 type="button"
+                className="button secondary"
                 onClick={() => navigate('/salons')}
               >
                 Annuler
@@ -87,9 +90,10 @@ export default function PlanifierPage() {
               <button
                 id="create-chat-submit"
                 type="submit"
+                className="button info bg-blue fg-white"
                 disabled={loading}
               >
-                {loading && <span />}
+                {loading && <span className="mif-spinner2 ani-spin mr-2" />}
                 Créer le salon
               </button>
             </div>

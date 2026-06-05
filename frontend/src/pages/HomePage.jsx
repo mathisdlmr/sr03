@@ -15,40 +15,55 @@ export default function HomePage() {
 
   return (
     <div>
-      <h1>
+      <h1 className="text-bold mb-2">
         Bonjour, {user?.firstname} {user?.lastname} !
       </h1>
-      <p>Bienvenue le Chat de SR03</p>
+      <p className="text-muted mb-6">Bienvenue le Chat de SR03</p>
 
-      <div>
-        <div>
-          <div>
-            <div>{ownedCount}</div>
-            <div>Salon{ownedCount !== 1 ? 's' : ''} créé{ownedCount !== 1 ? 's' : ''}</div>
+      <div className="row">
+        <div className="cell-md-4">
+          <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
+            <div className="d-flex flex-align-center mb-4">
+              <span className="mif-chat mif-3x fg-blue mr-4" />
+              <div>
+                <div className="text-leader2 text-bold fg-blue">{ownedCount}</div>
+                <div className="text-muted">Salon{ownedCount !== 1 ? 's' : ''} créé{ownedCount !== 1 ? 's' : ''}</div>
+              </div>
+            </div>
+            <Link to="/salons" className="button info small w-100">
+              Voir mes salons
+            </Link>
           </div>
-          <Link to="/salons">
-            Voir mes salons
-          </Link>
         </div>
 
-        <div>
-          <div>
-            <div>{invitedCount}</div>
-            <div>Invitation{invitedCount !== 1 ? 's' : ''} reçue{invitedCount !== 1 ? 's' : ''}</div>
+        <div className="cell-md-4">
+          <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
+            <div className="d-flex flex-align-center mb-4">
+              <span className="mif-envelope mif-3x fg-blue mr-4" />
+              <div>
+                <div className="text-leader2 text-bold fg-blue">{invitedCount}</div>
+                <div className="text-muted">Invitation{invitedCount !== 1 ? 's' : ''} reçue{invitedCount !== 1 ? 's' : ''}</div>
+              </div>
+            </div>
+            <Link to="/invitations" className="button info small w-100">
+              Voir mes invitations
+            </Link>
           </div>
-          <Link to="/invitations">
-            Voir mes invitations
-          </Link>
         </div>
 
-        <div>
-          <div>
-            <div>Nouveau</div>
-            <div>Planifier une discussion</div>
+        <div className="cell-md-4">
+          <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
+            <div className="d-flex flex-align-center mb-4">
+              <span className="mif-plus mif-3x fg-blue mr-4" />
+              <div>
+                <div className="text-leader2 text-bold fg-blue">Nouveau</div>
+                <div className="text-muted">Planifier une discussion</div>
+              </div>
+            </div>
+            <Link to="/planifier" className="button info small w-100">
+              Créer un salon
+            </Link>
           </div>
-          <Link to="/planifier">
-            Créer un salon
-          </Link>
         </div>
       </div>
     </div>

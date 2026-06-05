@@ -6,7 +6,7 @@ export default function AppLayout() {
   return (
     <div>
       <Navbar />
-      <main>
+      <main className="container mt-6">
         <Outlet />
       </main>
     </div>

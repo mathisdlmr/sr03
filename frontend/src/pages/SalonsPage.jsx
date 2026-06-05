@@ -27,57 +27,58 @@ export default function SalonsPage() {
 
   return (
     <div>
-      <div>
+      <div className="d-flex flex-justify-between flex-align-center mb-6">
         <div>
-          <h1>Mes salons de discussion</h1>
-          <p>Salons dont vous êtes le créateur</p>
+          <h1 className="text-bold mb-1">Mes salons de discussion</h1>
+          <p className="text-muted">Salons dont vous êtes le créateur</p>
         </div>
-        <Link to="/planifier">
-          <span />
+        <Link to="/planifier" className="button info">
+          <span className="mif-plus mr-2" />
           Nouveau salon
         </Link>
       </div>
 
       {error && (
-        <div>
-          {error}
+        <div className="alert alert-warning border-radius-2 mb-4">
+          <span className="mif-warning mx-2" />{error}
         </div>
       )}
 
       {loading ? (
-        <div>
-          Loading
+        <div className="d-flex flex-justify-center p-10">
+          <span className="mif-spinner2 ani-spin mif-3x fg-blue" />
         </div>
       ) : chats.length === 0 ? (
-        <div>
+        <div className="border border-size-1 border-radius-6 p-8 text-center text-muted">
+          <span className="mif-chat mif-4x d-block mb-4" />
           Vous n'avez pas encore créé de salon.&nbsp;
           <Link to="/planifier">Créer votre premier salon</Link>
         </div>
       ) : (
-        <table>
+        <table className="table border striped">
           <thead>
             <tr>
               <th>Titre</th>
               <th>Description</th>
               <th>Créé le</th>
               <th>Se termine le</th>
-              <th>Actions</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {chats.map((chat) => (
               <tr key={chat.id}>
-                <td>{chat.title}</td>
-                <td>{chat.description || '--'}</td>
+                <td className="text-bold">{chat.title}</td>
+                <td className="text-muted">{chat.description || '--'}</td>
                 <td>{formatDateTime(chat.createdAt)}</td>
                 <td>{formatDateTime(chat.endsAt)}</td>
-                <td>
+                <td className="text-right">
                   <button
-                   
+                    className="button small alert"
                     onClick={() => handleDelete(chat.id)}
                     title="Supprimer"
                   >
-                    <span />
+                    <span className="mif-bin" />
                   </button>
                 </td>
               </tr>

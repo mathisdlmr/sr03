@@ -13,25 +13,26 @@ export default function InvitationsPage() {
 
   return (
     <div>
-      <h1>Mes invitations</h1>
-      <p>Salons auxquels vous avez été invité</p>
+      <h1 className="text-bold mb-2">Mes invitations</h1>
+      <p className="text-muted mb-6">Salons auxquels vous avez été invité</p>
 
       {error && (
-        <div>
-          {error}
+        <div className="alert alert-warning border-radius-2 mb-4">
+          <span className="mif-warning mx-2" />{error}
         </div>
       )}
 
       {loading ? (
-        <div>
-          Loading
+        <div className="d-flex flex-justify-center p-10">
+          <span className="mif-spinner2 ani-spin mif-3x fg-green" />
         </div>
       ) : chats.length === 0 ? (
-        <div>
+        <div className="border border-size-1 border-radius-6 p-8 text-center text-muted">
+          <span className="mif-envelope mif-4x d-block mb-4" />
           Vous n'avez pas encore reçu d'invitation.
         </div>
       ) : (
-        <table>
+        <table className="table border striped">
           <thead>
             <tr>
               <th>Titre</th>
@@ -43,8 +44,8 @@ export default function InvitationsPage() {
           <tbody>
             {chats.map((chat) => (
               <tr key={chat.id}>
-                <td>{chat.title}</td>
-                <td>{chat.description || '--'}</td>
+                <td className="text-bold">{chat.title}</td>
+                <td className="text-muted">{chat.description || '--'}</td>
                 <td>{formatDateTime(chat.createdAt)}</td>
                 <td>{formatDateTime(chat.endsAt)}</td>
               </tr>
