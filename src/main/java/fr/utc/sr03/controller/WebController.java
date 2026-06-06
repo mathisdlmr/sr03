@@ -24,11 +24,40 @@ public class WebController {
     private PasswordResetTokenService passwordResetTokenService;
 
     // --- Helper ---
+    /**
+     * Vérifie que l'utilisateur connecté est admin
+     * On se base sur l'email pour vérifier chaque fois sur la dernière version de la BDD
+     * et non simplement sur la session
+     */
+    private String requireAdmin(HttpSession session, Model model) {
+        String email = (String) session.getAttribute("userEmail");
+        if (email == null) return "redirect:/login";
 
+        Users user = userService.getUserByEmailAddress(email);
+        if (user == null || !user.isActive()) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+        if (!user.isAdmin()) {
+            return "unauthorized";
+        }
+        model.addAttribute("sessionUser", user);
+        return null;
+    }
+
+    // On surcharge pour les endpoints qui n'ont pas de Model (les toggle, delete...)
     private String requireAdmin(HttpSession session) {
-        Users user = (Users) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
-        if (!user.isAdmin()) return "unauthorized";
+        String email = (String) session.getAttribute("userEmail");
+        if (email == null) return "redirect:/login";
+
+        Users user = userService.getUserByEmailAddress(email);
+        if (user == null || !user.isActive()) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+        if (!user.isAdmin()) {
+            return "unauthorized";
+        }
         return null;
     }
 
@@ -51,14 +80,14 @@ public class WebController {
 
     @GetMapping("/login")
     public String loginForm(HttpSession session) {
-        if (session.getAttribute("user") != null) {
+        if (session.getAttribute("userEmail") != null) {
             return "redirect:/";
         }
         return "login";
     }
 
     @PostMapping("/login")
-    public String loginSubmit(HttpSession session, Model model,  @RequestParam String mail,  @RequestParam String password) {
+    public String loginSubmit(HttpSession session, Model model, @RequestParam String mail, @RequestParam String password) {
         Users user = userService.findByCredentials(mail, password);
         if (user == null) {
             model.addAttribute("error", "Identifiants incorrects.");
@@ -71,7 +100,7 @@ public class WebController {
         if (!user.isAdmin()) {
             return "unauthorized";
         }
-        session.setAttribute("user", user);
+        session.setAttribute("userEmail", user.getMail());
         return "redirect:/";
     }
 
@@ -89,7 +118,7 @@ public class WebController {
     }
 
     @PostMapping("/askresetpwd")
-    public String askResetPasswordSubmit(Model model, @RequestParam String mail) {
+    public String askResetPasswordSubmit(HttpServletRequest request, Model model, @RequestParam String mail) {
         Users user = userService.getUserByEmailAddress(mail);
         if (user == null) {
             model.addAttribute("error", "Cette adresse mail n'est pas enregistrée.");
@@ -138,8 +167,8 @@ public class WebController {
     // --- (Admin) Home) ---
 
     @GetMapping("/")
-    public String home(HttpSession session) {
-        String check = requireAdmin(session);
+    public String home(HttpSession session, Model model) {
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
@@ -147,10 +176,10 @@ public class WebController {
     }
 
     // --- User Management ---
-    
+
     @GetMapping("/listuser")
-    public String listUsers(HttpSession session, Model model,  @RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "") String search) {
-        String check = requireAdmin(session);
+    public String listUsers(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String search) {
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
@@ -165,8 +194,8 @@ public class WebController {
     }
 
     @GetMapping("/listinactiveuser")
-    public String listInactiveUsers(HttpSession session, Model model,  @RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "") String search) {
-        String check = requireAdmin(session);
+    public String listInactiveUsers(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String search) {
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
@@ -181,8 +210,8 @@ public class WebController {
     }
 
     @GetMapping("/create")
-    public String createUserForm(HttpSession session) {
-        String check = requireAdmin(session);
+    public String createUserForm(HttpSession session, Model model) {
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
@@ -190,8 +219,8 @@ public class WebController {
     }
 
     @PostMapping("/create")
-    public String createUserSubmit(HttpSession session, Model model,  @RequestParam String firstname, @RequestParam String lastname,  @RequestParam String mail,  @RequestParam(defaultValue = "false") boolean admin) {
-        String check = requireAdmin(session);
+    public String createUserSubmit(HttpSession session, HttpServletRequest request, Model model, @RequestParam String firstname, @RequestParam String lastname, @RequestParam String mail, @RequestParam(defaultValue = "false") boolean admin) {
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
@@ -222,7 +251,7 @@ public class WebController {
 
     @GetMapping("/edituser/{id}")
     public String editUserForm(HttpSession session, Model model, @PathVariable int id) {
-        String check = requireAdmin(session);
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
@@ -235,8 +264,8 @@ public class WebController {
     }
 
     @PostMapping("/edituser/{id}")
-    public String editUserSubmit(HttpSession session, Model model,  @PathVariable int id, @RequestParam String firstname,  @RequestParam String lastname,  @RequestParam String mail,  @RequestParam(defaultValue = "false") boolean admin,  @RequestParam(required = false) String password) {
-        String check = requireAdmin(session);
+    public String editUserSubmit(HttpSession session, Model model, @PathVariable int id, @RequestParam String firstname, @RequestParam String lastname, @RequestParam String mail, @RequestParam(defaultValue = "false") boolean admin, @RequestParam(required = false) String password) {
+        String check = requireAdmin(session, model);
         if (check != null) {
             return check;
         }
