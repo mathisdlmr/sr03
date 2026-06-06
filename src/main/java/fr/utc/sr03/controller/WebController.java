@@ -23,7 +23,11 @@ public class WebController {
     @Resource
     private PasswordResetTokenService passwordResetTokenService;
 
-    // --- Helper ---
+    @Resource
+    private JakartaEmail jakartaEmail;
+
+    // --- Helpers ---
+
     /**
      * Vérifie que l'utilisateur connecté est admin
      * On se base sur l'email pour vérifier chaque fois sur la dernière version de la BDD
@@ -61,6 +65,13 @@ public class WebController {
         return null;
     }
 
+    // Génère une URL de base dynamiquement (dans le cas du TD, http://localhost:8080)
+    private String getBaseUrl(HttpServletRequest request) {
+        return ServletUriComponentsBuilder.fromRequestUri(request)
+            .replacePath(null)
+            .build()
+            .toUriString();
+    }
     // Fonction récupérée et adaptée du diapo "TD3" sur Moodle
     private static String generatePassword(int length) {
         String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890!@#$%^&*()";
@@ -126,8 +137,8 @@ public class WebController {
         }
         String token = UUID.randomUUID().toString();
         passwordResetTokenService.createPasswordResetTokenForUser(user, token);
-        String resetLink = "http://localhost:8080/resetpwd?token=" + token; // TODO : mettre une URL automatique (pas juste localhost:8080 hard-codé)
-        new JakartaEmail().sendMail(mail, "Réinitialisation de mot de passe",
+        String resetLink = getBaseUrl(request) + "/resetpwd?token=" + token;
+        jakartaEmail.sendMail(mail, "Réinitialisation de mot de passe",
             "<p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe (valable 5 minutes) :</p>"
             + "<p><a href='" + resetLink + "'>" + resetLink + "</a></p>");
         model.addAttribute("success", "Un lien de réinitialisation a été envoyé à votre adresse mail.");
@@ -239,11 +250,13 @@ public class WebController {
         user.setAdmin(admin);
         user.setActive(true);
         userService.saveUser(user);
+        String safeFirstname = HtmlUtils.htmlEscape(firstname); // Comme le firstName est définir par le user, on l'échappe pour éviter des XSS
+        String loginUrl = getBaseUrl(request) + "/login";
 
-        new JakartaEmail().sendMail(mail, "Bienvenue sur SR03 Chat",
-            "<p>Bonjour " + firstname + ",</p>"
+        jakartaEmail.sendMail(mail, "Bienvenue sur SR03 Chat",
+            "<p>Bonjour " + safeFirstname + ",</p>"
             + "<p>Votre compte a été créé. Voici votre mot de passe temporaire : <strong>" + tempPassword + "</strong></p>"
-            + "<p>Connectez-vous sur <a href='http://localhost:8080/login'>http://localhost:8080/login</a></p>"); // TODO : mettre une URL automatique (pas juste localhost:8080 hard-codé)
+            + "<p>Connectez-vous sur <a href='" + loginUrl + "'>" + loginUrl + "</a></p>");
 
         model.addAttribute("success", "Utilisateur créé avec succès. Un mail de confirmation a été envoyé.");
         return "create_user";
