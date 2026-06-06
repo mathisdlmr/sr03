@@ -14,19 +14,19 @@
 <body>
     <nav data-role="appbar" data-expand-point="md" class="border border-size-1 bd-gray shadow-normal">
         <ul class="app-bar-menu">
-            <li><a th:href="@{/listuser}">Accueil</a></li>
-            <li><a th:href="@{/create}">Nouveau utilisateur</a></li>
-            <li><a th:href="@{/listinactiveuser}">Utilisateurs désactivés</a></li>
+            <li><a th:classappend="${!inactive ? ' active' : ''}" th:href="@{/listuser}"><span class="mif-home mr-1"></span> Accueil</a></li>
+            <li><a th:href="@{/create}"><span class="mif-add-person mr-1"></span> Nouveau utilisateur</a></li>
+            <li><a th:classappend="${inactive ? ' active' : ''}" th:href="@{/listinactiveuser}"><span class="mif-uninstall mr-1"></span> Utilisateurs désactivés</a></li>
         </ul>
 
-        <div class="app-bar-item-static mx-auto">
-            <p th:text="${session.user.firstname + ' ' + session.user.lastname}"></p>
+        <div class="app-bar-item-static mx-auto mt-2">
+            <h3 th:text="${sessionUser.firstname + ' ' + sessionUser.lastname}"></h3>
         </div>
 
         <div class="app-bar-item-static ml-auto">
             <a th:href="@{/logout}">
                 <button class="small ml-1 alert">
-                    Déconnexion
+                    <span class="mif-switch mr-1"></span> Déconnexion
                 </button>
             </a>
         </div>
@@ -37,7 +37,11 @@
             <div class="text-center cell-md-6 offset-md-3">
                 <h2>Éditer l'utilisateur</h2>
                 <div class="border border-size-1 border-radius-10 bd-blue p-8">
+                    <div th:if="${error}" class="alert alert-warning border-radius-2 mb-4">
+                        <span th:text="${error}"></span>
+                    </div>
                     <form th:action="@{/edituser/{id}(id=${editedUser.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <div class="form-group">
                             <label class="label-for-input">Prénom <span class="fg-red">*</span></label>
                             <input type="text" name="firstname" data-role="input" th:value="${editedUser.firstname}" required minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ\-\s]+" title="Lettres, espaces et tirets uniquement">
@@ -53,6 +57,7 @@
                         <div class="form-group mt-4">
                             <label class="label-for-input">Nouveau mot de passe <small class="text-muted">(laisser vide pour ne pas changer)</small></label>
                             <input type="password" name="password" data-role="input" placeholder="*********" minlength="8" data-prepend="<span class='mif-lock'></span>" data-reveal-button-icon="<span class='mif-eye mif-2x'></span>">
+                            <small class="text-muted">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</small>
                         </div>
                         <div class="form-group mt-4">
                             <label class="label-for-input mb-2">Compte administrateur ?</label>

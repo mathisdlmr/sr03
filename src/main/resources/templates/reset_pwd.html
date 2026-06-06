@@ -27,6 +27,7 @@
                         </div>
 
                         <form th:action="@{/resetpwd}" method="post" onsubmit="return validatePwd()">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <input type="hidden" name="token" th:value="${token}">
                             <div class="form-group">
                                 <label class="label-for-input">Adresse e-mail</label>
@@ -37,7 +38,7 @@
                                 <input type="password" name="password" id="pwd" data-role="input"
                                        placeholder="*********" data-prepend="<span class='mif-lock'></span>"
                                        data-reveal-button-icon="<span class='mif-eye mif-2x'></span>" required minlength="8">
-                                <small class="text-muted">Au moins 8 caractères</small>
+                                <small class="text-muted">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</small>
                             </div>
                             <div class="form-group mt-4">
                                 <label class="label-for-input">Confirmer le mot de passe <span class="fg-red">*</span></label>

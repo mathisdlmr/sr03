@@ -35,7 +35,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/forgot-password", "/api/auth/reset-password")
+                .permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -44,14 +45,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // On désactive Spring Security sur les autres routes étant donné que l'on utilise déjà des sessions HTTP
-    // Idéalement on aurait pu utiliser des JWT pour l'interface Admin et l'API
     @Bean
     @Order(2)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/**")
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**"))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
         return http.build();
