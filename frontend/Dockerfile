@@ -1,3 +1,5 @@
+# Dockerfile from https://www.docker.com/blog/how-to-dockerize-react-app/
+
 ARG NODE_VERSION=24.14.0-alpine
  
 FROM node:${NODE_VERSION} AS dev
