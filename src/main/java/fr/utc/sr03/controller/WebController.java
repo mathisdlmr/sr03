@@ -5,12 +5,15 @@ import fr.utc.sr03.services.JakartaEmail;
 import fr.utc.sr03.services.PasswordResetTokenService;
 import fr.utc.sr03.services.UserService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.UUID;
 
@@ -72,12 +75,53 @@ public class WebController {
             .build()
             .toUriString();
     }
+
+    /**
+     * Valide le mot de passe : on demande au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+     * Retourne null si valide, sinon renvoi un message d'erreur
+     */
+    private String validatePassword(String password) {
+        if (password == null || password.length() < 8) {
+            return "Le mot de passe doit contenir au moins 8 caractères.";
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            return "Le mot de passe doit contenir au moins une majuscule.";
+        }
+        if (!password.matches(".*[a-z].*")) {
+            return "Le mot de passe doit contenir au moins une minuscule.";
+        }
+        if (!password.matches(".*[0-9].*")) {
+            return "Le mot de passe doit contenir au moins un chiffre.";
+        }
+        return null;
+    }
+
+    // On définit un sanitizer basique pour éviter que le user puisse
+    // rediriger vers un site externe après une requête POST
+    private String sanitizeReturnUrl(String returnUrl) {
+        if (returnUrl == null || returnUrl.isBlank()) {
+            return "/listuser";
+        }
+        if (!returnUrl.startsWith("/") || returnUrl.contains("://") || returnUrl.startsWith("//")) {
+            return "/listuser";
+        }
+        return returnUrl;
+    }
+
     // Fonction récupérée et adaptée du diapo "TD3" sur Moodle
     private static String generatePassword(int length) {
-        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890!@#$%^&*()";
+        String upper = "ABCDEFGHIJKLMNOP";
+        String lower = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "1234567890";
+        String special = "!@#$%^&*()";
+        String all = upper + lower + digits + special;
+
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            sb.append(chars.charAt((int) (Math.random() * chars.length())));
+        sb.append(upper.charAt((int) (Math.random() * upper.length())));
+        sb.append(lower.charAt((int) (Math.random() * lower.length())));
+        sb.append(digits.charAt((int) (Math.random() * digits.length())));
+        for (int i = 3; i < length; i++) {
+            sb.append(all.charAt((int) (Math.random() * all.length())));
         }
         return sb.toString();
     }
@@ -157,18 +201,22 @@ public class WebController {
         return "reset_pwd";
     }
 
-//    @GetMapping("/resetpwd_test")
-//    public String resetPasswordFormTest(Model model) {
-//        model.addAttribute("email", "my@email");
-//        return "reset_pwd";
-//    } // Test vue html, to delete
-
     @PostMapping("/resetpwd")
-    public String resetPasswordSubmit(@RequestParam String token,  @RequestParam String password,  Model model) {
+    public String resetPasswordSubmit(@RequestParam String token, @RequestParam String password, Model model) {
         if (!passwordResetTokenService.validatePasswordResetToken(token)) {
             model.addAttribute("error", "Lien de réinitialisation invalide ou expiré.");
             return "ask_reset_pwd";
         }
+
+        String pwdError = validatePassword(password);
+        if (pwdError != null) {
+            model.addAttribute("error", pwdError);
+            model.addAttribute("token", token);
+            Users user = passwordResetTokenService.getUserByToken(token);
+            model.addAttribute("email", user.getMail());
+            return "reset_pwd";
+        }
+
         Users user = passwordResetTokenService.getUserByToken(token);
         userService.changePassword(user, password);
         passwordResetTokenService.deletePasswordResetToken(token);
@@ -286,19 +334,27 @@ public class WebController {
         if (user == null) {
             return "redirect:/listuser";
         }
+
+        if (password != null && !password.isBlank()) {
+            String pwdError = validatePassword(password);
+            if (pwdError != null) {
+                model.addAttribute("error", pwdError);
+                model.addAttribute("editedUser", user);
+                return "edit_user";
+            }
+            user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+        }
+
         user.setFirstname(firstname);
         user.setLastname(lastname);
         user.setMail(mail);
         user.setAdmin(admin);
-        if (password != null && !password.isBlank()) {
-            user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-        }
         userService.saveUser(user);
         return "redirect:/listuser";
     }
 
     @PostMapping("/toggleuser/{id}")
-    public String toggleUser(HttpSession session, @PathVariable int id,  @RequestParam(defaultValue = "/listuser") String returnUrl) {
+    public String toggleUser(HttpSession session, @PathVariable int id, @RequestParam(defaultValue = "/listuser") String returnUrl) {
         String check = requireAdmin(session);
         if (check != null) {
             return check;
@@ -308,7 +364,7 @@ public class WebController {
             user.setActive(!user.isActive());
             userService.saveUser(user);
         }
-        return "redirect:" + returnUrl;
+        return "redirect:" + sanitizeReturnUrl(returnUrl);
     }
 
     @PostMapping("/deleteuser/{id}")
@@ -318,6 +374,6 @@ public class WebController {
             return check;
         }
         userService.deleteUser(id);
-        return "redirect:" + returnUrl;
+        return "redirect:" + sanitizeReturnUrl(returnUrl);
     }
 }
