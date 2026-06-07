@@ -5,7 +5,8 @@ CREATE TABLE users (
     mail TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     admin BOOLEAN DEFAULT FALSE,
-    active BOOLEAN DEFAULT TRUE
+    active BOOLEAN DEFAULT TRUE,
+    avatar TEXT /* Utilisé pour stocker un avatar en base64 */
 );
 
 CREATE TABLE chat (
@@ -31,4 +32,4 @@ CREATE TABLE invitation (
     UNIQUE (user_id, chat_id)
 );
 
-INSERT INTO users VALUES (1,'Mathis', 'Delmaere', 'mathis.delmaere@etu.utc.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',true, true); /* password 123456789 */
+INSERT INTO users VALUES (1,'Mathis', 'Delmaere', 'mathis.delmaere@etu.utc.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',true, true, NULL); /* password 123456789 */

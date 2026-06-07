@@ -1,5 +1,10 @@
 package fr.utc.sr03.websocket;
 
+import fr.utc.sr03.model.Users;
+import fr.utc.sr03.security.JwtUtil;
+import fr.utc.sr03.services.ChatService;
+import fr.utc.sr03.services.InvitationService;
+import fr.utc.sr03.services.UserService;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -8,65 +13,201 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+// Ce code s'est inspiré de ce tuto de base pour manipuler les websocket avec Spinr : https://www.djamware.com/post/realtime-chat-app-with-java-websocket-and-spring-boot
+// Ainsi qu'un peut de doc sur les Websocket Session : https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/socket/WebSocketSession.html
 
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    private final String nameChat;
     private final Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
-    private final List<WebSocketSession> sessions;
-    private final List<MessageSocket> messageSocketsHistory;
 
-    public WebSocketHandler(String nameChat) {
-        this.nameChat = nameChat;
-        this.messageSocketsHistory = new ArrayList<>();
-        this.sessions = new ArrayList<>();
+    // chatId -> Set de sessions connectées à ce salon
+    private final Map<String, Set<WebSocketSession>> chatSessions = new ConcurrentHashMap<>();
+    // sessionId -> infos utilisateurs connectés
+    private final Map<String, Users> sessionUsers = new ConcurrentHashMap<>();
+    // sessionId -> chatId (pour retrouver le salon lors de la déconnexion)
+    private final Map<String, String> sessionChatIds = new ConcurrentHashMap<>();
+
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
+    private final ChatService chatService;
+    private final InvitationService invitationService;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public WebSocketHandler(JwtUtil jwtUtil, UserService userService, ChatService chatService, InvitationService invitationService) {
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+        this.chatService = chatService;
+        this.invitationService = invitationService;
     }
 
-    @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws IOException {
+    // Extrait le chatId depuis l'URL de la WebSocket (par exemple : /ws/chat/42 -> "42")
+    private String extractChatId(WebSocketSession session) {
+        URI uri = session.getUri();
+        if (uri == null) {
+            return null;
+        }
+        String path = uri.getPath();
+        String[] parts = path.split("/");
+        return parts.length >= 4 ? parts[3] : null;
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        String receivedMessage = (String) message.getPayload();
-        MessageSocket messageSocket = mapper.readValue(receivedMessage, MessageSocket.class);
-
-        // Pour stocker le message dans l'historique
-        messageSocketsHistory.add(messageSocket);
-
-        // Envoi du message à tous les connectés
-        this.broadcast(messageSocket.getUser() + " : " + messageSocket.getMessage());
-
+    // Extrait le token JWT depuis les query params de l'URL WebSocket (par exemple : ?token=xxx)
+    private String extractToken(WebSocketSession session) {
+        URI uri = session.getUri();
+        if (uri == null || uri.getQuery() == null) {
+            return null;
+        }
+        String query = uri.getQuery();
+        for (String param : query.split("&")) {
+            String[] key_value = param.split("=", 2);
+            if (key_value.length == 2 && "token".equals(key_value[0])) {
+                return key_value[1];
+            }
+        }
+        return null;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws IOException {
-        // On stocke la session du client dans une liste
-        sessions.add(session);
-        logger.info(session.getId());
+        String chatId = extractChatId(session);
+        String token = extractToken(session);
 
-        // J'affiche l'historique du salon
-        for (MessageSocket messageSocket : messageSocketsHistory) {
-            session.sendMessage(new TextMessage(messageSocket.getUser() + " : " + messageSocket.getMessage()));
+        if (token == null || !jwtUtil.isTokenValid(token) || jwtUtil.isRefreshToken(token)) {
+            session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Authentification échouée."))));
+            session.close();
+            return;
         }
 
-        logger.info("Connecté sur le " + this.nameChat);
+        String email = jwtUtil.extractEmail(token);
+        Users user = userService.getUserByEmailAddress(email);
+        if (user == null || !user.isActive()) {
+            session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Utilisateur introuvable ou désactivé."))));
+            session.close();
+            return;
+        }
 
+        if (chatId != null) {
+            try {
+                int chatIdInt = Integer.parseInt(chatId);
+                boolean isOwner = chatService.isOwner(chatIdInt, user.getId());
+                boolean isInvited = invitationService.isInvited(chatIdInt, user.getId());
+                if (!isOwner && !isInvited) {
+                    session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Vous n'êtes pas autorisé à accéder à ce salon."))));
+                    session.close();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                session.close(CloseStatus.BAD_DATA);
+                return;
+            }
+        }
+
+        sessionUsers.put(session.getId(), user);
+        sessionChatIds.put(session.getId(), chatId);
+
+        Set<WebSocketSession> sessions = chatSessions.get(chatId);
+        if (sessions == null) {
+            sessions = ConcurrentHashMap.newKeySet();
+            chatSessions.put(chatId, sessions);
+        }
+        sessions.add(session);
+
+        logger.info("Utilisateur " + user.getFirstname() + " " + user.getLastname() + " connecté au salon " + chatId);
+        broadcastToChat(chatId, MessageSocket.system(user.getFirstname() + " " + user.getLastname() + " a rejoint le salon."));
+        broadcastUserList(chatId);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws IOException {
+        String chatId = sessionChatIds.get(session.getId());
+        Users user = sessionUsers.get(session.getId());
+        if (chatId == null || user == null) {
+            return;
+        }
 
-        // Quand le client quitte, on retire sa session
-        sessions.remove(session);
-        logger.info("Déconnecté du " + this.nameChat);
+        String payload = (String) message.getPayload();
+        MessageSocket incoming = mapper.readValue(payload, MessageSocket.class);
 
+        MessageSocket outgoing = new MessageSocket();
+        outgoing.setUser(user.getFirstname() + " " + user.getLastname());
+        outgoing.setUserId(user.getId());
+        outgoing.setAvatar(user.getAvatar());
+        outgoing.setTimestamp(System.currentTimeMillis());
+
+        if ("image".equals(incoming.getType())) {
+            outgoing.setType("image");
+            outgoing.setImageData(incoming.getImageData());
+        } else {
+            outgoing.setType("text");
+            outgoing.setMessage(incoming.getMessage());
+        }
+
+        broadcastToChat(chatId, outgoing);
     }
 
-    public void broadcast(String message) throws IOException {
-        for (WebSocketSession session : sessions) {
-            session.sendMessage(new TextMessage(message));
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws IOException {
+        String chatId = sessionChatIds.remove(session.getId());
+        Users user = sessionUsers.remove(session.getId());
+
+        if (chatId != null) {
+            Set<WebSocketSession> sessions = chatSessions.get(chatId);
+            if (sessions != null) {
+                sessions.remove(session);
+                if (sessions.isEmpty()) {
+                    chatSessions.remove(chatId);
+                }
+            }
+
+            if (user != null) {
+                logger.info("Utilisateur " + user.getFirstname() + " " + user.getLastname() + " déconnecté du salon " + chatId);
+                broadcastToChat(chatId, MessageSocket.system(user.getFirstname() + " " + user.getLastname() + " a quitté le salon."));
+                broadcastUserList(chatId);
+            }
         }
+    }
+
+    // Envoie un message à tous les connectés d'un salon
+    private void broadcastToChat(String chatId, MessageSocket message) throws IOException {
+        Set<WebSocketSession> sessions = chatSessions.get(chatId);
+        if (sessions == null) {
+            return;
+        }
+
+        String json = mapper.writeValueAsString(message);
+        TextMessage textMessage = new TextMessage(json);
+
+        for (WebSocketSession session : sessions) {
+            if (session.isOpen()) {
+                try {
+                    session.sendMessage(textMessage);
+                } catch (IOException e) {
+                    logger.warning("Erreur lors de l'envoi au session " + session.getId() + " : " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    // Envoie la liste des utilisateurs connectés à tous les connectés d'un salon
+    private void broadcastUserList(String chatId) throws IOException {
+        Set<WebSocketSession> sessions = chatSessions.get(chatId);
+        if (sessions == null) {
+            return;
+        }
+
+        List<MessageSocket.ConnectedUser> connectedUsers = new ArrayList<>();
+        for (WebSocketSession s : sessions) {
+            Users u = sessionUsers.get(s.getId());
+            if (u != null) {
+                connectedUsers.add(new MessageSocket.ConnectedUser(u.getId(), u.getFirstname(), u.getLastname(), u.getAvatar()));
+            }
+        }
+
+        broadcastToChat(chatId, MessageSocket.userList(connectedUsers));
     }
 }
