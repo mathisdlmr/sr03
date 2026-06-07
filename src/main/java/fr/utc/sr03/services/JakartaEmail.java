@@ -3,33 +3,64 @@ package fr.utc.sr03.services;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 
+@Service
 public class JakartaEmail {
 
-    public JakartaEmail() {}
+    @Value("${mail.mode:dev}")
+    private String mailMode; // "dev" = pour print en console, "prod" = envoie de mail classique
+
+    @Value("${mail.smtp.host:smtp.gmail.com}")
+    private String smtpHost;
+
+    @Value("${mail.smtp.port:587}")
+    private String smtpPort;
+
+    @Value("${mail.smtp.user:}")
+    private String smtpUser;
+
+    @Value("${mail.smtp.password:}")
+    private String smtpPassword;
+
+    @Value("${mail.from:nepasrepondre@utc.fr}")
+    private String fromAddress;
 
     public void sendMail(String mail, String subject, String content) {
-        String to = mail;
-        String from = "nepasrepondre@utc.fr";
-        String host = "smtp1.utc.fr";
+        if ("dev".equalsIgnoreCase(mailMode)) {
+            System.out.println(" --------------- EMAIL (mode dev) ---------------");
+            System.out.println("To : " + mail);
+            System.out.println("Subject : " + subject);
+            System.out.println("Content : " + content);
+            return;
+        }
 
         Properties props = new Properties();
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", "25");
+        props.put("mail.smtp.host", smtpHost);
+        props.put("mail.smtp.port", smtpPort);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.debug", "false");
 
-        Session session = Session.getInstance(props, null);
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(smtpUser, smtpPassword);
+            }
+        });
+
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setFrom(new InternetAddress(fromAddress));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail));
             message.setSubject(subject);
-            message.setContent(content, "text/html");
+            message.setContent(content, "text/html; charset=UTF-8");
             Transport.send(message);
         } catch (MessagingException e) {
-            System.out.println(e.toString());
+            System.err.println("Erreur lors de l'envoi de l'email à " + mail + " : " + e.getMessage());
         }
     }
 }
