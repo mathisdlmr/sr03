@@ -340,4 +340,28 @@ public class ApiController {
 
         return ResponseEntity.ok(Map.of("success", true));
     }
+
+    // ----- User endpoints ----- //
+
+    /**
+     * GET /api/users/search?q=...
+     * Recherche d'utilisateurs par nom, prénom ou email (pour l'autocomplétion d'invitation par exemple)
+     */
+    @GetMapping("/users/search")
+    public ResponseEntity<?> searchUsers(@RequestParam String q) {
+        Users user = getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        if (q == null || q.trim().length() < 2) {
+            return ResponseEntity.ok(List.of());
+        }
+
+        List<Users> users = userService.searchUsers(q.trim());
+        List<Users.UserDTO> dtos = users.stream()
+            .filter(u -> u.getId() != user.getId())
+            .map(Users.UserDTO::from)
+            .toList();
+        return ResponseEntity.ok(dtos);
+    }
 }
