@@ -29,8 +29,13 @@ public class ApiController {
     private InvitationService invitationService;
     @Resource
     private JwtUtil jwtUtil;
+    @Resource
+    private PasswordResetTokenService passwordResetTokenService;
+    @Resource
+    private JakartaEmail jakartaEmail;
 
     // ----- Helpers ----- //
+
     // Récupère l'utilisateur authentifié via le JWT
     private Users getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -76,7 +81,7 @@ public class ApiController {
         if (!user.isActive()) {
             return ResponseEntity.status(403).body(Map.of("error", "Votre compte est désactivé."));
         }
-        String accessToken  = jwtUtil.generateAccessToken(user.getMail());
+        String accessToken = jwtUtil.generateAccessToken(user.getMail());
         String refreshToken = jwtUtil.generateRefreshToken(user.getMail());
         return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, Users.UserDTO.from(user)));
     }
@@ -85,7 +90,7 @@ public class ApiController {
      * POST /api/auth/refresh
      * Header : Authorization: Bearer <refresh_token>
      * Retourne : nouvel access_token + nouvel refresh_token
-    */
+     */
     @PostMapping("/auth/refresh")
     public ResponseEntity<?> refresh(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -100,7 +105,7 @@ public class ApiController {
         if (user == null || !user.isActive()) {
             return ResponseEntity.status(401).body(Map.of("error", "Utilisateur introuvable ou désactivé."));
         }
-        String newAccessToken  = jwtUtil.generateAccessToken(email);
+        String newAccessToken = jwtUtil.generateAccessToken(email);
         String newRefreshToken = jwtUtil.generateRefreshToken(email);
         return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken, Users.UserDTO.from(user)));
     }
@@ -108,11 +113,13 @@ public class ApiController {
     /**
      * GET /api/auth/me
      * Retourne : les infos de l'utilisateur connecté (extrait du JWT)
-    */
+     */
     @GetMapping("/auth/me")
     public ResponseEntity<?> me() {
         Users user = getCurrentUser();
-        if (user == null) return ResponseEntity.status(401).build();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(Users.UserDTO.from(user));
     }
 
@@ -211,58 +218,81 @@ public class ApiController {
     /**
      * GET /api/chats/mine
      * Liste les salons dont l'utilisateur connecté est créateur
-    */
+     */
     @GetMapping("/chats/mine")
     public ResponseEntity<List<Chat>> getMyChats() {
         Users user = getCurrentUser();
-        if (user == null) return ResponseEntity.status(401).build();
+        if (user == null){
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(chatService.getChatByCreatorId(user.getId()));
     }
 
     /**
      * GET /api/chats/invited
      * Liste les salons auxquels l'utilisateur connecté est invité
-    */
+     */
     @GetMapping("/chats/invited")
     public ResponseEntity<List<Chat>> getInvitedChats() {
         Users user = getCurrentUser();
-        if (user == null) return ResponseEntity.status(401).build();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(chatService.getChatsByInvitations(user.getId()));
     }
 
     /**
      * POST /api/chats
      * Crée un nouveau salon, le créateur est l'utilisateur connecté
-     * Body JSON : { "title": "...", "description": "..." }
-    */
+     * Body JSON : { "title": "...", "description": "...", "startsAt":
+     * "2026-06-10T14:00", "durationMinutes": 60 }
+     */
     @PostMapping("/chats")
     public ResponseEntity<?> createChat(@RequestBody ChatDTO chatDTO) {
         Users user = getCurrentUser();
-        if (user == null) return ResponseEntity.status(401).build();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
 
+        if (chatDTO.getTitle() == null || chatDTO.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Le titre est obligatoire."));
+        }
         Chat chat = new Chat();
         chat.setCreator(user);
-        chat.setTitle(chatDTO.getTitle());
-        chat.setDescription(chatDTO.getDescription());
+        chat.setTitle(chatDTO.getTitle().trim());
+        chat.setDescription(chatDTO.getDescription() != null ? chatDTO.getDescription().trim() : "");
         chat.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        // Date de fin : +10 jours par défaut (à améliorer)
-        chat.setEndsAt(Timestamp.valueOf(LocalDateTime.now().plusDays(10)));
-        chatService.saveChat(chat);
+        if (chatDTO.getStartsAt() != null && !chatDTO.getStartsAt().isBlank()) { // Si on a une date de début -> chat de 1h par défaut (pour prévoir une réunion par exemple). Sinon, le chat est disponible immédiatement et pendant 10 jours par défaut
+            try {
+                LocalDateTime startsAt = LocalDateTime.parse(chatDTO.getStartsAt());
+                int duration = chatDTO.getDurationMinutes() > 0 ? chatDTO.getDurationMinutes() : 60;
+                chat.setEndsAt(Timestamp.valueOf(startsAt.plusMinutes(duration)));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Format de date invalide."));
+            }
+        } else {
+            chat.setEndsAt(Timestamp.valueOf(LocalDateTime.now().plusDays(10)));
+        }
 
+        chatService.saveChat(chat);
         return ResponseEntity.ok(Map.of("success", true));
     }
 
     /**
      * DELETE /api/chats/{id}
      * Supprime un salon si l'utilisateur connecté en est le créateur
-    */
+     */
     @DeleteMapping("/chats/{id}")
     public ResponseEntity<?> deleteChat(@PathVariable int id) {
         Users user = getCurrentUser();
-        if (user == null) return ResponseEntity.status(401).build();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
 
         Chat chat = chatService.getChatById(id);
-        if (chat == null) return ResponseEntity.notFound().build();
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
         if (chat.getCreator().getId() != user.getId()) {
             return ResponseEntity.status(403).body(Map.of("error", "Vous n'êtes pas le créateur de ce salon."));
         }
@@ -275,20 +305,32 @@ public class ApiController {
     /**
      * POST /api/invitations
      * Invite un utilisateur dans un salon (le demandeur doit être le créateur).
-    */
+     */
     @PostMapping("/invitations")
     public ResponseEntity<?> inviteUser(@RequestParam int idUser, @RequestParam int idChat) {
         Users currentUser = getCurrentUser();
-        if (currentUser == null) return ResponseEntity.status(401).build();
+        if (currentUser == null) {
+            return ResponseEntity.status(401).build();
+        }
 
         Chat chat = chatService.getChatById(idChat);
-        if (chat == null) return ResponseEntity.notFound().build();
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
         if (chat.getCreator().getId() != currentUser.getId()) {
             return ResponseEntity.status(403).body(Map.of("error", "Seul le créateur peut inviter des membres."));
         }
+        if (idUser == currentUser.getId()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Vous ne pouvez pas vous inviter vous-même."));
+        }
 
         Users invitedUser = userService.getUserById(idUser);
-        if (invitedUser == null) return ResponseEntity.badRequest().body(Map.of("error", "Utilisateur introuvable."));
+        if (invitedUser == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Utilisateur introuvable."));
+        }
+        if (invitationService.isInvited(idChat, idUser)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Cet utilisateur est déjà invité à ce salon."));
+        }
 
         Invitation invitation = new Invitation();
         invitation.setChat(chat);
