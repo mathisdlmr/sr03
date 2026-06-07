@@ -27,7 +27,9 @@ public class ChatService {
         return chatRepository.findByCreatorId(creator_id);
     }
 
-    public List<Chat> getChatsByInvitations(int user_id) { return chatRepository.findByInvitationUserId(user_id); }
+    public List<Chat> getChatsByInvitations(int user_id) {
+        return chatRepository.findByInvitationUserId(user_id);
+    }
 
     public List<Chat> getAllChats() {
         return chatRepository.findAll();
@@ -39,5 +41,7 @@ public class ChatService {
     }
 
     // OTHER METHODS
-    public boolean isOwner(int chat_id, int user_id)  { return chatRepository.isOwner(chat_id, user_id); }
+    public boolean isOwner(int chat_id, int user_id) {
+        return chatRepository.countOwner(chat_id, user_id) > 0;
+    }
 }

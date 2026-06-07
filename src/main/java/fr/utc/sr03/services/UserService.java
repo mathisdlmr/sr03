@@ -44,11 +44,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    // SEARCH
+    public List<Users> searchUsers(String query) {
+        String s = "%" + query + "%";
+        return userRepository.searchUsers(s);
+    }
+
     // DELETE
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteUserByEmail(String emailAddress) {
         userRepository.deleteUserByEmail(emailAddress);
     }

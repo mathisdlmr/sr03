@@ -33,6 +33,10 @@ public class Users {
     @Column(name = "active")
     private boolean active;
 
+    @Column(name = "avatar", columnDefinition = "TEXT")
+    @JsonIgnore
+    private String avatar;
+
     @OneToMany(mappedBy = "creator")
     @JsonIgnore
     private List<Chat> createdChats;
@@ -100,6 +104,14 @@ public class Users {
         this.active = active;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public List<Chat> getCreatedChats() {
         return createdChats;
     }
@@ -118,9 +130,9 @@ public class Users {
 
     // On définit un DTO pour choisir expréssément les champs que l'on veut exposer de l'entité Users à travers l'API
     // (notamment pour ne pas exposer le mot de passe hashé, ou tout autre champ qui serait ajouté à postériori)
-    public record UserDTO(int id, String firstname, String lastname, String mail, boolean admin) {
+    public record UserDTO(int id, String firstname, String lastname, String mail, boolean admin, String avatar) {
         public static UserDTO from(Users user) {
-            return new UserDTO(user.getId(), user.getFirstname(), user.getLastname(), user.getMail(), user.isAdmin());
+            return new UserDTO(user.getId(), user.getFirstname(), user.getLastname(), user.getMail(), user.isAdmin(), user.getAvatar());
         }
     }
 }

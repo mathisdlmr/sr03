@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,8 +16,7 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
     @Query("select u from Users u where u.mail = ?1")
     Users findByEmailAddress(String emailAddress);
 
-    @Query(value = "select u from Users u where u.active = ?1 and (u.mail like ?2 or u.firstname like ?2 or u.lastname like ?2)",
-           countQuery = "select count(u) from Users u where u.active = ?1 and (u.mail like ?2 or u.firstname like ?2 or u.lastname like ?2)")
+    @Query(value = "select u from Users u where u.active = ?1 and (u.mail like ?2 or u.firstname like ?2 or u.lastname like ?2)", countQuery = "select count(u) from Users u where u.active = ?1 and (u.mail like ?2 or u.firstname like ?2 or u.lastname like ?2)")
     Page<Users> findByActiveAndSearch(boolean active, String search, Pageable pageable);
 
     @Query("select u from Users u where u.id = ?1 and u.admin=?2")
@@ -32,6 +30,9 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
 
     @Query("select u from Users u where u.mail = ?1 and u.active=?2")
     List<Users> findActiveUsersByEmail(String emailAddress, Boolean isActive);
+
+    @Query("select u from Users u where u.active = true and (u.mail like ?1 or u.firstname like ?1 or u.lastname like ?1)")
+    List<Users> searchUsers(String query);
 
     @Modifying
     @Query("delete from Users u where u.mail = ?1")

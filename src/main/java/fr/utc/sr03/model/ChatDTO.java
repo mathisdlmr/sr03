@@ -5,6 +5,8 @@ public class ChatDTO {
     private String title;
     private String description;
     private int creatorId;
+    private String startsAt;
+    private int durationMinutes;
 
     public String getTitle() {
         return title;
@@ -28,5 +30,21 @@ public class ChatDTO {
 
     public void setCreatorId(int creatorId) {
         this.creatorId = creatorId;
+    }
+
+    public String getStartsAt() {
+        return startsAt;
+    }
+
+    public void setStartsAt(String startsAt) {
+        this.startsAt = startsAt;
+    }
+
+    public int getDurationMinutes() {
+        return durationMinutes;
+    }
+
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
     }
 }

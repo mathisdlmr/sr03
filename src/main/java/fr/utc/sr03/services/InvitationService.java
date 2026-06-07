@@ -37,5 +37,7 @@ public class InvitationService {
     }
 
     // OTHER METHODS
-    public boolean isInvited(int chat_id, int user_id)  { return invitationRepository.isInvited(chat_id, user_id); }
+    public boolean isInvited(int chat_id, int user_id) {
+        return invitationRepository.countInvited(chat_id, user_id) > 0;
+    }
 }
