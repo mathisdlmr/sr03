@@ -2,19 +2,20 @@ package fr.utc.sr03.controller;
 
 import fr.utc.sr03.model.*;
 import fr.utc.sr03.security.JwtUtil;
-import fr.utc.sr03.services.ChatService;
-import fr.utc.sr03.services.InvitationService;
-import fr.utc.sr03.services.UserService;
+import fr.utc.sr03.services.*;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -113,6 +114,96 @@ public class ApiController {
         Users user = getCurrentUser();
         if (user == null) return ResponseEntity.status(401).build();
         return ResponseEntity.ok(Users.UserDTO.from(user));
+    }
+
+    /**
+     * POST /api/auth/forgot-password
+     * Body : mail
+     * Envoie un lien de réinitialisation de mot de passe par email
+     */
+    @PostMapping("/auth/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String mail) {
+        Users user = userService.getUserByEmailAddress(mail);
+        if (user == null) {
+            return ResponseEntity.ok(Map.of("success", "Si cette adresse est enregistrée, un lien de réinitialisation a été envoyé."));
+        }
+        String token = UUID.randomUUID().toString();
+        passwordResetTokenService.createPasswordResetTokenForUser(user, token);
+        String resetLink = "http://localhost:5173/reset-password?token=" + token;
+        jakartaEmail.sendMail(mail, "Réinitialisation de mot de passe",
+            "<p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe (valable 5 minutes) :</p>" + "<p><a href='" + resetLink + "'>" + resetLink + "</a></p>");
+        return ResponseEntity.ok(Map.of("success", "Si cette adresse est enregistrée, un lien de réinitialisation a été envoyé."));
+    }
+
+    /**
+     * POST /api/auth/reset-password
+     * Body : token, password
+     * Réinitialise le mot de passe de l'utilisateur
+     */
+    @PostMapping("/auth/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String password) {
+        if (!passwordResetTokenService.validatePasswordResetToken(token)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Lien de réinitialisation invalide ou expiré."));
+        }
+
+        String pwdError = validatePassword(password);
+        if (pwdError != null) {
+            return ResponseEntity.badRequest().body(Map.of("error", pwdError));
+        }
+
+        Users user = passwordResetTokenService.getUserByToken(token);
+        userService.changePassword(user, password);
+        passwordResetTokenService.deletePasswordResetToken(token);
+        return ResponseEntity.ok(Map.of("success", "Mot de passe réinitialisé avec succès."));
+    }
+
+    // ----- Avatar endpoints (préfix /api/auth) ----- //
+
+    /**
+     * POST /api/auth/avatar
+     * Multipart : fichier de max 1Mo
+     * Endpoint pour uploader un avatar (max 1Mo) qui sera stocké en base64 en BDD
+     */
+    @PostMapping("/auth/avatar")
+    public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        Users user = getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Aucun fichier fourni."));
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Le fichier doit être une image."));
+        }
+        if (file.getSize() > 1_048_576) {
+            return ResponseEntity.badRequest().body(Map.of("error", "L'image ne doit pas dépasser 1 Mo."));
+        }
+
+        try {
+            String base64 = "data:" + contentType + ";base64," + Base64.getEncoder().encodeToString(file.getBytes());
+            user.setAvatar(base64);
+            userService.saveUser(user);
+            return ResponseEntity.ok(Map.of("success", true, "avatar", base64));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", "Erreur lors de l'upload de l'avatar."));
+        }
+    }
+
+    /**
+     * DELETE /api/auth/avatar
+     * Supprime l'avatar de l'utilisateur connecté
+     */
+    @DeleteMapping("/auth/avatar")
+    public ResponseEntity<?> deleteAvatar() {
+        Users user = getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        user.setAvatar(null);
+        userService.saveUser(user);
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     // ----- Chat endpoints (préfix /api/chats) ----- //
