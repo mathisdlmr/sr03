@@ -39,13 +39,33 @@ public class ApiController {
         return null;
     }
 
-    // ----- Auth endoints (préfix /api/auth) ----- //
+    /**
+     * Valide le mot de passe : on demande au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+     * Retourne null si valide, sinon renvoi un message d'erreur
+     */
+    private String validatePassword(String password) {
+        if (password == null || password.length() < 8) {
+            return "Le mot de passe doit contenir au moins 8 caractères.";
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            return "Le mot de passe doit contenir au moins une majuscule.";
+        }
+        if (!password.matches(".*[a-z].*")) {
+            return "Le mot de passe doit contenir au moins une minuscule.";
+        }
+        if (!password.matches(".*[0-9].*")) {
+            return "Le mot de passe doit contenir au moins un chiffre.";
+        }
+        return null;
+    }
+
+    // ----- Auth endpoints (préfix /api/auth) ----- //
 
     /**
      * POST /api/auth/login
      * Body (form-data ou JSON) : mail, password
      * Retourne : access_token (24h), refresh_token (7j), info de l'utilisateur connecté
-    */
+     */
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestParam String mail, @RequestParam String password) {
         Users user = userService.findByCredentials(mail, password);
