@@ -29,6 +29,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    // Méthode pour générer un access token JWT à partir de l'email de l'utilisateur
     public String generateAccessToken(String email) {
         return Jwts.builder()
             .claim("type", "access")
@@ -39,6 +40,7 @@ public class JwtUtil {
             .compact();
     }
 
+    // Méthode pour générer un refresh token JWT à partir de l'email de l'utilisateur
     public String generateRefreshToken(String email) {
         return Jwts.builder()
             .claim("type", "refresh")
@@ -49,6 +51,7 @@ public class JwtUtil {
             .compact();
     }
 
+    // Méthode pour extraire les claims (informations contenues dans le token) d'un token JWT
     private Claims parseClaims(String token) {
         return Jwts.parser()
             .verifyWith(getSigningKey())
@@ -57,10 +60,12 @@ public class JwtUtil {
             .getPayload();
     }
 
+    // Méthode pour extraire l'email de l'utilisateur à partir d'un token JWT
     public String extractEmail(String token) {
         return parseClaims(token).getSubject();
     }
 
+    // Méthode pour vérifier si un token JWT est valide (signature correcte et pas expiré)
     public boolean isTokenValid(String token) {
         try {
             Claims claims = parseClaims(token);
@@ -70,6 +75,7 @@ public class JwtUtil {
         }
     }
 
+    // Méthode pour vérifier si un token JWT est un refresh token (plutôt qu'un access token)
     public boolean isRefreshToken(String token) {
         try {
             return "refresh".equals(parseClaims(token).get("type"));

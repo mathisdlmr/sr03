@@ -9,6 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+// Code récupéré et adapté de : https://www.baeldung.com/spring-security-registration-i-forgot-my-password
+// Chaque fois qu'un utilisateur demande une réinitialisation de mot de passe, on crée un token associé à cet utilisateur et on l'enregistre en base
+// Ce token a un TTL de 5 minutes (après quoi il expire et ne peut plus être utilisé)
+
 @Service
 public class PasswordResetTokenService {
 
@@ -16,7 +20,7 @@ public class PasswordResetTokenService {
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Transactional
-    public void createPasswordResetTokenForUser(Users user, String token) { // Code récupéré et adapté de : https://www.baeldung.com/spring-security-registration-i-forgot-my-password
+    public void createPasswordResetTokenForUser(Users user, String token) {
         PasswordResetToken existing = passwordResetTokenRepository.findByUser(user);
         if (existing != null) {
             passwordResetTokenRepository.delete(existing);

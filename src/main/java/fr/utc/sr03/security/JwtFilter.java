@@ -18,8 +18,6 @@ import java.util.List;
 
 // Ce Middleware JWT a été inspiré de ce tutoriel en ligne sur la gestion de JWT avec Spring
 // https://www.cosmiclearn.com/spring_framework/rest_jwt_authentication.php
-// Petite exception pour le niveau d'authorité (L43) qui a été redéfini à la main pour pouvoir l'adapter à notre utilisation
-// https://www.geeksforgeeks.org/advance-java/spring-security-userdetailsservice-and-userdetails-with-example/
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -32,17 +30,22 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        // On extrait le token JWT depuis le header "Authorization" de la requête
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            if (jwtUtil.isTokenValid(token) && !jwtUtil.isRefreshToken(token)) { // On n'authentifie qu'à partir des access tokens
+
+            // On n'authentifie qu'à partir des access tokens
+            if (jwtUtil.isTokenValid(token) && !jwtUtil.isRefreshToken(token)) {
+
+                // On récupère les informations de l'utilisateur à partir du token JWT
                 String email = jwtUtil.extractEmail(token);
                 Users user = userService.getUserByEmailAddress(email);
-                if (user != null && user.isActive() && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER"));
 
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                // Puis on fait quelques vérifications avant de le connecter
+                // La vérification `SecurityContextHolder.getContext().getAuthentication() == null` permet de s'assurer qu'on n'écrase pas une authentification déjà présente
+                if (user != null && user.isActive() && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null);
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }

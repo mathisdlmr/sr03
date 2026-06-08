@@ -25,6 +25,11 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void changePassword(Users user, String newPassword) {
+        user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+        userRepository.save(user);
+    }
+
     // READ
     public Users getUserById(int id) {
         return userRepository.findById(id).orElse(null);
@@ -50,17 +55,6 @@ public class UserService {
         return userRepository.searchUsers(s);
     }
 
-    // DELETE
-    public void deleteUser(int id) {
-        userRepository.deleteById(id);
-    }
-
-    @Transactional
-    public void deleteUserByEmail(String emailAddress) {
-        userRepository.deleteUserByEmail(emailAddress);
-    }
-
-    // OTHER METHODS
     public Users findByCredentials(String emailAddress, String password) {
         Users user = userRepository.findByEmailAddress(emailAddress);
         if (user == null) {
@@ -76,8 +70,13 @@ public class UserService {
         return null;
     }
 
-    public void changePassword(Users user, String newPassword) {
-        user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-        userRepository.save(user);
+    // DELETE
+    public void deleteUser(int id) {
+        userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteUserByEmail(String emailAddress) {
+        userRepository.deleteUserByEmail(emailAddress);
     }
 }

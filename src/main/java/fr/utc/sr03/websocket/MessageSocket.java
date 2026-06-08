@@ -18,6 +18,7 @@ public class MessageSocket {
 
     public MessageSocket() {}
 
+    // Méthode pour créer un message système (par exemple : "Mathis a rejoint le salon")
     public static MessageSocket system(String message) {
         MessageSocket msg = new MessageSocket();
         msg.setType("system");
@@ -26,6 +27,7 @@ public class MessageSocket {
         return msg;
     }
 
+    // Méthode pour créer un message de type "user_list" contenant la liste des utilisateurs connectés
     public static MessageSocket userList(List<ConnectedUser> users) {
         MessageSocket msg = new MessageSocket();
         msg.setType("user_list");

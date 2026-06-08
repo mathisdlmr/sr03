@@ -11,6 +11,9 @@ run:
 	@echo "============================================="
 	@echo "Frontend disponible sur http://localhost:5173"
 	@echo "Backend disponible sur http://localhost:8080"
+	@echo ""
+	@echo "Attendre quelques secondes pour que les services soient prêts..."
+	@echo "Si jamais le service ne démarre pas, retirer les redirections stderr/stdout ('> /dev/null 2>&1') du Makefile et relancer pour débugger"
 	@echo "============================================="
 	@make run-application > /dev/null 2>&1 &
 	@make run-frontend > /dev/null 2>&1

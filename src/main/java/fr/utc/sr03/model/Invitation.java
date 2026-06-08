@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(
-        name = "invitation",
-        uniqueConstraints = { @UniqueConstraint( columnNames = { "user_id", "chat_id"})}
+    name = "invitation",
+    uniqueConstraints = { @UniqueConstraint( columnNames = { "user_id", "chat_id"})}
 )
 public class Invitation {
 

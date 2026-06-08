@@ -30,6 +30,12 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+        // Pour toutes les routes qui commencent par /api/, on applique cette configuration de sécurité : 
+        // - on désactive le CSRF (car on utilise des tokens JWT et pas des sessions), 
+        // - on configure CORS pour autoriser les requêtes provenant de notre frontend, 
+        // - on dit que les routes d'authentification sont accessibles sans être connecté mais que toutes les autres routes nécessitent une authentification, 
+        // - on configure la session pour qu'elle soit stateless (car on utilise des tokens JWT) et 
+        // - enfin on ajoute notre JwtFilter avant le filtre d'authentification de Spring Security
         http
             .securityMatcher("/api/**")
             .csrf(csrf -> csrf.disable())
@@ -48,6 +54,8 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
+        // En deuxième lieu, pour toutes les autres routes (notamment les routes de l'interface admin), on applique cette configuration de sécurité : 
+        // on autorise toutes les requêtes (car l'interface admin est protégée par une authentification HTTP Basic au niveau du controller, et pas par Spring Security)
         http
             .securityMatcher("/**")
             .csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**"))
@@ -58,12 +66,14 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        // On configure CORS pour autoriser les requêtes provenant de notre frontend (http://localhost:5173)
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(false);
 
+        // Cette configuration CORS s'applique à toutes les routes de notre API (celles qui commencent par /api/)
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
         return source;

@@ -24,16 +24,3 @@ java --version
 npm -v
 ```
 
-## Planning
-
-| Date    | Sujet                                                  | On en est où ? |
-| ------- | ------------------------------------------------------ | -------------- |
-| 03-avr  | Présentation devoir 2 + conception uml                 | X              |
-| 10-avr  | Hibernate ORM + écriture des requêtes                  | X              |
-| 06-mai  | Controller et Rest Controller, Thymeleaf ( Vue Admin ) | X              |
-| 15-mai  | Controller et Rest Controller, Thymeleaf ( Vue Admin ) | X              |
-| 22-mai  | WebSocket                                              | X              |
-| 29-mai  | WebSocket                                              |                |
-| 05-juin | REACT                                                  |                |
-| 12-juin | REACT                                                  |                |
-| 19-juin | Soutenances                                            |                |

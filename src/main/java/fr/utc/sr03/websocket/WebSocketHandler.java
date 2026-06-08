@@ -18,18 +18,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-// Ce code s'est inspiré de ce tuto de base pour manipuler les websocket avec Spinr : https://www.djamware.com/post/realtime-chat-app-with-java-websocket-and-spring-boot
-// Ainsi qu'un peut de doc sur les Websocket Session : https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/socket/WebSocketSession.html
-
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private final Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
 
-    // chatId -> Set de sessions connectées à ce salon
+    // chatId -> Set de sessions connectées à ce salon ("qui est connecté à quel salon ?")
     private final Map<String, Set<WebSocketSession>> chatSessions = new ConcurrentHashMap<>();
-    // sessionId -> infos utilisateurs connectés
+    // sessionId -> infos utilisateurs connectés ("cette session appartient à quel utilisateur ?")
     private final Map<String, Users> sessionUsers = new ConcurrentHashMap<>();
-    // sessionId -> chatId (pour retrouver le salon lors de la déconnexion)
+    // sessionId -> chatId ("cette session est connectée à quel salon ?")
     private final Map<String, String> sessionChatIds = new ConcurrentHashMap<>();
 
     private final JwtUtil jwtUtil;
@@ -57,6 +54,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     // Extrait le token JWT depuis les query params de l'URL WebSocket (par exemple : ?token=xxx)
+    // Le token que l'on cherche est la valeur du param d'URL "token"
     private String extractToken(WebSocketSession session) {
         URI uri = session.getUri();
         if (uri == null || uri.getQuery() == null) {
@@ -77,12 +75,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String chatId = extractChatId(session);
         String token = extractToken(session);
 
+        // Vérification sur l'authentification
         if (token == null || !jwtUtil.isTokenValid(token) || jwtUtil.isRefreshToken(token)) {
             session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Authentification échouée."))));
             session.close();
             return;
         }
 
+        // Vérification sur le user
         String email = jwtUtil.extractEmail(token);
         Users user = userService.getUserByEmailAddress(email);
         if (user == null || !user.isActive()) {
@@ -91,6 +91,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // Vérification sur les droits d'accès au salon de chat
         if (chatId != null) {
             try {
                 int chatIdInt = Integer.parseInt(chatId);
@@ -107,6 +108,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
 
+        // Si tout est bon, on enregistre la session
         sessionUsers.put(session.getId(), user);
         sessionChatIds.put(session.getId(), chatId);
 
@@ -117,6 +119,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         sessions.add(session);
 
+        // Puis on notifie les autres connectés du salon que ce user a rejoint le chat
         logger.info("Utilisateur " + user.getFirstname() + " " + user.getLastname() + " connecté au salon " + chatId);
         broadcastToChat(chatId, MessageSocket.system(user.getFirstname() + " " + user.getLastname() + " a rejoint le salon."));
         broadcastUserList(chatId);
@@ -130,9 +133,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // On lit le message envoyé par le client, qui est au format JSON
         String payload = (String) message.getPayload();
         MessageSocket incoming = mapper.readValue(payload, MessageSocket.class);
 
+        // Puis on créé un nouveau message avec le payload et toutes les infos du user
         MessageSocket outgoing = new MessageSocket();
         outgoing.setUser(user.getFirstname() + " " + user.getLastname());
         outgoing.setUserId(user.getId());
@@ -147,11 +152,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
             outgoing.setMessage(incoming.getMessage());
         }
 
+        // On broadcast finalement le message à tous les connectés du salon
         broadcastToChat(chatId, outgoing);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws IOException {
+        // Lorsqu'une session se déconnecte, on la retire de nos listes de sessions connectées
         String chatId = sessionChatIds.remove(session.getId());
         Users user = sessionUsers.remove(session.getId());
 
@@ -165,6 +172,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
             if (user != null) {
+                // Puis on notifie les autres connectés du salon que ce user a quitté le chat
                 logger.info("Utilisateur " + user.getFirstname() + " " + user.getLastname() + " déconnecté du salon " + chatId);
                 broadcastToChat(chatId, MessageSocket.system(user.getFirstname() + " " + user.getLastname() + " a quitté le salon."));
                 broadcastUserList(chatId);
@@ -179,9 +187,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // On convertit le message en JSON 
         String json = mapper.writeValueAsString(message);
         TextMessage textMessage = new TextMessage(json);
 
+        // Puis on l'envoie à toutes les sessions connectées au salon
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 try {
@@ -200,6 +210,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // On construit la liste des utilisateurs connectés au salon
         List<MessageSocket.ConnectedUser> connectedUsers = new ArrayList<>();
         for (WebSocketSession s : sessions) {
             Users u = sessionUsers.get(s.getId());
@@ -208,6 +219,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
 
+        // Puis on broadcast cette liste à tous les connectés du salon
         broadcastToChat(chatId, MessageSocket.userList(connectedUsers));
     }
 }
