@@ -4,16 +4,21 @@ import { getMyChats, deleteChat } from '../api/chatApi';
 import { formatDateTime } from '../utils/dateUtils';
 
 export default function SalonsPage() {
-  const [chats, setChats]     = useState([]);
+  const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState('');
+  const [error, setError] = useState('');
 
   const loadChats = () => {
     setLoading(true);
-    getMyChats().then((data) => setChats(data)).catch(() => setError('Impossible de charger vos salons...')).finally(() => setLoading(false));
+    getMyChats()
+      .then((data) => setChats(data))
+      .catch(() => setError('Impossible de charger vos salons...'))
+      .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadChats(); }, []);
+  useEffect(() => {
+    loadChats();
+  }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Supprimer ce salon ?')) return;
@@ -23,6 +28,10 @@ export default function SalonsPage() {
     } catch {
       alert('Erreur lors de la suppression...');
     }
+  };
+
+  const openChat = (chatId) => {
+    window.open(`/chat/${chatId}`);
   };
 
   return (
@@ -69,10 +78,17 @@ export default function SalonsPage() {
             {chats.map((chat) => (
               <tr key={chat.id}>
                 <td className="text-bold">{chat.title}</td>
-                <td className="text-muted">{chat.description || '--'}</td>
+                <td className="text-italic">{chat.description || '--'}</td>
                 <td>{formatDateTime(chat.createdAt)}</td>
                 <td>{formatDateTime(chat.endsAt)}</td>
                 <td className="text-right">
+                  <button
+                    className="button small info mr-2"
+                    onClick={() => openChat(chat.id)}
+                    title="Rejoindre le chat"
+                  >
+                    <span className="mif-chat mr-1" /> Rejoindre
+                  </button>
                   <button
                     className="button small alert"
                     onClick={() => handleDelete(chat.id)}
