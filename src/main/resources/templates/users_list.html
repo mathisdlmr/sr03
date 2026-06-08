@@ -71,7 +71,7 @@
                             <a th:href="@{/edituser/{id}(id=${u.id})}" class="button small bg-dark fg-white">
                                 <span class="mif-pencil mr-1"></span> Éditer
                             </a>
-                            <form th:action="@{/toggleuser/{id}(id=${u.id})}" method="post" style="margin:0;">
+                            <form th:action="@{/toggleuser/{id}(id=${u.id})}" method="post" th:onsubmit="return confirm('${u.active ? 'Désactiver' : 'Activer'} ce compte utilisateur ?')" style="margin:0;">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <input type="hidden" name="returnUrl" th:value="${listUrl}">
                                 <button type="submit" th:class="${u.active ? 'button small bg-orange fg-white w-100' : 'button small bg-green fg-white w-100'}">
