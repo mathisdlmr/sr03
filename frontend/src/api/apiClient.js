@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+/**
+ * Le fichier apiClient est responsable de la communication avec l'API.
+ * Il permet de normaliser les requêtes (GET, POST, DELETE) formulées au backend.
+ * Dans le même temps, l'apiClient gère le retry en cas d'expiration d'access token.
+ */
+
 const API_URL = '/api';
 
 const refreshTokens = async () => {
@@ -15,10 +21,10 @@ const refreshTokens = async () => {
     localStorage.setItem('access_token', res.data.access_token);
     localStorage.setItem('refresh_token', res.data.refresh_token);
     return true;
-  } catch (e) {
+  } catch (error) {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    throw new Error('JWT expired');
+    throw new Error(error.response?.data?.error || 'JWT expired');
   }
 };
 

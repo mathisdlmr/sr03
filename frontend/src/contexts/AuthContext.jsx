@@ -1,5 +1,10 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import { login as apiLogin, getMe } from '../api/authApi';
+
+/**
+ * Le fichier AuthContext est responsable de la gestion de l'état d'authentification de l'utilisateur
+ * Il fournit des fonctions pour se connecter, se déconnecter et rafraîchir les informations de l'utilisateur
+ */
 
 export const AuthContext = createContext(null);
 
@@ -38,8 +43,19 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  // Fonction pour rafraîchir les infos utilisateur (si le user change son avatar par exemple)
+  const refreshUser = useCallback(async () => {
+    try {
+      const data = await getMe();
+      setUser(data);
+    } catch {
+      console.error('Erreur lors du rafraîchissement des infos utilisateur');
+      logout();
+    }
+  }, [logout]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
-import AppLayout      from '../layouts/AppLayout';
-import LoginPage      from '../pages/LoginPage';
-import HomePage       from '../pages/HomePage';
-import PlanifierPage  from '../pages/PlanifierPage';
-import SalonsPage     from '../pages/SalonsPage';
+import AppLayout from '../layouts/AppLayout';
+import LoginPage from '../pages/LoginPage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage';
+import ResetPasswordPage from '../pages/ResetPasswordPage';
+import HomePage from '../pages/HomePage';
+import PlanifierPage from '../pages/PlanifierPage';
+import SalonsPage from '../pages/SalonsPage';
 import InvitationsPage from '../pages/InvitationsPage';
+import ChatPage from '../pages/ChatPage';
+import ProfilePage from '../pages/ProfilePage';
 
 // Redirige vers /login si non authentifié.
 // Affiche un spinner le temps que AuthContext vérifie le token stocké.
@@ -28,19 +32,25 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Route de login constamment accessible */ }
-        <Route path="/login" element={<LoginPage />} /> 
+        {/* Routes publiques */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        {/* Routes protégées, accessibles seulement si authentifié */ }
+        {/* Route du chat (ouverte dans une nouvelle fenêtre sans navbar) */}
+        <Route path="/chat/:chatId" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+
+        {/* Routes protégées avec layout (navbar + contenu) */}
         <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/planifier" element={<PlanifierPage />} />
           <Route path="/salons" element={<SalonsPage />} />
           <Route path="/invitations" element={<InvitationsPage />} />
+          <Route path="/profil" element={<ProfilePage />} />
         </Route>
 
-        {/* Fallback vers /home pour toute route inconnue */ }
+        {/* Fallback vers /home pour toute route inconnue */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>

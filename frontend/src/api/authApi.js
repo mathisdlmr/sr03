@@ -1,13 +1,14 @@
 import axios from 'axios';
-import { apiGet, apiPost } from './apiClient';
+import { apiGet } from './apiClient';
 
 const API_URL = '/api';
 
 /**
- * POST /api/auth/login
- * Body (form-data ou JSON) : mail, password
- * Retourne : access_token (24h), refresh_token (7j), info de l'utilisateur connecté
-*/
+ * Le fichier authApi est responsable de la communication avec le service d'authentification de l'API : "/api/auth/..."
+ * On utilise ce fichier pour définir les fonctions de login, refresh des token, mot de passe oublié, etc.
+ * Ce fichier ne se base pas sur apiClient car l'apiClient suppose que l'utilisateur est déjà authentifié
+ */
+
 export const login = async (mail, password) => {
   const res = await axios.post(
     `${API_URL}/auth/login`,
@@ -16,11 +17,6 @@ export const login = async (mail, password) => {
   return res.data;
 };
 
-/**
- * POST /api/auth/refresh
- * Header : Authorization: Bearer <refresh_token>
- * Retourne : nouvel access_token + nouvel refresh_token
-*/
 export const refresh = async (refreshToken) => {
   const res = await axios.post(`${API_URL}/auth/refresh`, null, {
     headers: { Authorization: `Bearer ${refreshToken}` },
@@ -28,8 +24,20 @@ export const refresh = async (refreshToken) => {
   return res.data;
 };
 
-/**
- * GET /api/auth/me
- * Retourne : les infos de l'utilisateur connecté (extrait du JWT)
-*/
 export const getMe = () => apiGet('auth/me');
+
+export const forgotPassword = async (mail) => {
+  const res = await axios.post(
+    `${API_URL}/auth/forgot-password`,
+    new URLSearchParams({ mail })
+  );
+  return res.data;
+};
+
+export const resetPassword = async (token, password) => {
+  const res = await axios.post(
+    `${API_URL}/auth/reset-password`,
+    new URLSearchParams({ token, password })
+  );
+  return res.data;
+};
