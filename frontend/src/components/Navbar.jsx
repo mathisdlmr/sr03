@@ -12,40 +12,51 @@ export default function Navbar() {
 
   return (
     <header className="border border-size-1 bd-gray shadow-normal" data-role="appbar" data-expand-point="md">
-      <ul className="app-bar-menu">
+      <ul className="app-bar-menu" style={{ fontSize: '14px' }}>
         <li>
           <NavLink to="/home" className={({ isActive }) => isActive ? 'text-bold' : ''}>
-            Accueil
+            <span className="mif-home mr-1" /> Accueil
           </NavLink>
         </li>
         <li>
           <NavLink to="/planifier" className={({ isActive }) => isActive ? 'text-bold' : ''}>
-            Planifier une discussion
+            <span className="mif-plus mr-1" /> Planifier une discussion
           </NavLink>
         </li>
         <li>
           <NavLink to="/salons" className={({ isActive }) => isActive ? 'text-bold' : ''}>
-            Mes salons de discussion
+            <span className="mif-chat mr-1" /> Mes salons
           </NavLink>
         </li>
         <li>
           <NavLink to="/invitations" className={({ isActive }) => isActive ? 'text-bold' : ''}>
-            Mes invitations
+            <span className="mif-mail mr-1" /> Mes invitations
           </NavLink>
         </li>
       </ul>
 
-      <div className="app-bar-item-static mx-auto">
+      <div className="app-bar-item-static mx-auto d-flex flex-align-center">
         {user && (
-          <span className="text-muted">
-            {user.firstname} {user.lastname}
-          </span>
+          <span className="h3 mt-3">{user.firstname} {user.lastname}</span>
         )}
       </div>
 
       <div className="app-bar-item-static ml-auto">
+        {user && (
+          <NavLink to="/profil" className="d-flex flex-align-center" style={{ textDecoration: 'none', color: 'inherit' }}>
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt="avatar"
+                style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', marginRight: 8 }}
+              />
+            ) : (
+              <span className="mif-account-circle mif-4x fg-blue mr-2" />
+            )}
+          </NavLink>
+        )}
         <button className="button small alert ml-1" onClick={handleLogout}>
-          Déconnexion
+          <span className="mif-switch mr-1" /> Déconnexion
         </button>
       </div>
     </header>
