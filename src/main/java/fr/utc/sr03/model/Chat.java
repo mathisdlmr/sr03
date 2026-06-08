@@ -41,9 +41,10 @@ public class Chat {
     @JsonIgnore
     private List<Invitation> invitations;
 
-    // ===================
-    // Getters and Setters
-    // ===================
+    // --------------------------------//
+    // ----- Getters and Setters ----- //
+    // --------------------------------//
+
     public int getId() {
         return id;
     }

@@ -26,9 +26,9 @@ public class Invitation {
     @Column(name = "invitation_date")
     private Timestamp invitationDate;
 
-    // ===================
-    // Getters and Setters
-    // ===================
+    // --------------------------------//
+    // ----- Getters and Setters ----- //
+    // --------------------------------//
     public int getId() {
         return id;
     }

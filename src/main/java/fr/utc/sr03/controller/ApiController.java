@@ -34,7 +34,9 @@ public class ApiController {
     @Resource
     private JakartaEmail jakartaEmail;
 
+    // --------------------//
     // ----- Helpers ----- //
+    // --------------------//
 
     // Récupère l'utilisateur authentifié via le JWT
     private Users getCurrentUser() {
@@ -65,7 +67,9 @@ public class ApiController {
         return null;
     }
 
+    // ----------------------------------------------//
     // ----- Auth endpoints (préfix /api/auth) ----- //
+    // ----------------------------------------------//
 
     /**
      * POST /api/auth/login
@@ -164,7 +168,9 @@ public class ApiController {
         return ResponseEntity.ok(Map.of("success", "Mot de passe réinitialisé avec succès."));
     }
 
+    // ------------------------------------------------//
     // ----- Avatar endpoints (préfix /api/auth) ----- //
+    // ------------------------------------------------//
 
     /**
      * POST /api/auth/avatar
@@ -213,7 +219,9 @@ public class ApiController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
+    // -----------------------------------------------//
     // ----- Chat endpoints (préfix /api/chats) ----- //
+    // -----------------------------------------------//
 
     /**
      * GET /api/chats/mine
@@ -300,7 +308,9 @@ public class ApiController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
+    // -----------------------------------------------------------//
     // ----- Invitation endpoints (préfix /api/invitations) ----- //
+    // -----------------------------------------------------------//
 
     /**
      * POST /api/invitations
@@ -341,7 +351,9 @@ public class ApiController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
+    // ---------------------------//
     // ----- User endpoints ----- //
+    // ---------------------------//
 
     /**
      * GET /api/users/search?q=...

@@ -36,8 +36,10 @@ public class MessageSocket {
         return msg;
     }
 
-    // --- Getters & Setters ---
-
+    // --------------------------------//
+    // ----- Getters and Setters ----- //
+    // --------------------------------//
+    
     public String getType() {
         return type;
     }

@@ -29,7 +29,9 @@ public class WebController {
     @Resource
     private JakartaEmail jakartaEmail;
 
-    // --- Helpers ---
+    // --------------------//
+    // ----- Helpers ----- //
+    // --------------------//
 
     /**
      * Vérifie que l'utilisateur connecté est admin
@@ -126,7 +128,9 @@ public class WebController {
         return sb.toString();
     }
 
-    // --- Auth ---
+    // -----------------//
+    // ----- Auth ----- //
+    // -----------------//
 
     @GetMapping("/unauthorized")
     public String unauthorized() {
@@ -165,7 +169,9 @@ public class WebController {
         return "redirect:/login";
     }
 
-    // --- Reset Password ---
+    // ---------------------------//
+    // ----- Reset Password ----- //
+    // ---------------------------//
 
     @GetMapping("/askresetpwd")
     public String askResetPasswordForm() {
@@ -223,7 +229,9 @@ public class WebController {
         return "redirect:/login";
     }
 
-    // --- (Admin) Home) ---
+    // -------------------------//
+    // ----- (Admin) Home ----- //
+    // -------------------------//
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
@@ -234,7 +242,9 @@ public class WebController {
         return "redirect:/listuser";
     }
 
-    // --- User Management ---
+    // ----------------------------//
+    // ----- User Management ----- //
+    // ----------------------------//
 
     @GetMapping("/listuser")
     public String listUsers(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String search) {
