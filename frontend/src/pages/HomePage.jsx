@@ -5,12 +5,16 @@ import { getMyChats, getInvitedChats } from '../api/chatApi';
 
 export default function HomePage() {
   const { user } = useAuth();
-  const [ownedCount, setOwnedCount]     = useState('...');
+  const [ownedCount, setOwnedCount] = useState('...');
   const [invitedCount, setInvitedCount] = useState('...');
 
   useEffect(() => {
-    getMyChats().then((data) => setOwnedCount(data.length)).catch(() => setOwnedCount('?'));
-    getInvitedChats().then((data) => setInvitedCount(data.length)).catch(() => setInvitedCount('?'));
+    getMyChats()
+      .then((data) => setOwnedCount(data.length))
+      .catch(() => setOwnedCount('?'));
+    getInvitedChats()
+      .then((data) => setInvitedCount(data.length))
+      .catch(() => setInvitedCount('?'));
   }, []);
 
   return (
@@ -21,6 +25,21 @@ export default function HomePage() {
       <p className="text-muted mb-6">Bienvenue le Chat de SR03</p>
 
       <div className="row">
+        <div className="cell-md-4">
+          <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
+            <div className="d-flex flex-align-center mb-4">
+              <span className="mif-plus mif-3x fg-blue mr-4" />
+              <div>
+                <div className="text-leader2 text-bold fg-blue">Nouveau</div>
+                <div className="text-muted">Planifier une discussion</div>
+              </div>
+            </div>
+            <Link to="/planifier" className="button info small w-100">
+              Créer un salon
+            </Link>
+          </div>
+        </div>
+
         <div className="cell-md-4">
           <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
             <div className="d-flex flex-align-center mb-4">
@@ -39,7 +58,7 @@ export default function HomePage() {
         <div className="cell-md-4">
           <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
             <div className="d-flex flex-align-center mb-4">
-              <span className="mif-envelope mif-3x fg-blue mr-4" />
+              <span className="mif-mail mif-3x fg-blue mr-4" />
               <div>
                 <div className="text-leader2 text-bold fg-blue">{invitedCount}</div>
                 <div className="text-muted">Invitation{invitedCount !== 1 ? 's' : ''} reçue{invitedCount !== 1 ? 's' : ''}</div>
@@ -47,21 +66,6 @@ export default function HomePage() {
             </div>
             <Link to="/invitations" className="button info small w-100">
               Voir mes invitations
-            </Link>
-          </div>
-        </div>
-
-        <div className="cell-md-4">
-          <div className="border border-size-1 border-radius-6 p-6 bd-blue shadow-normal">
-            <div className="d-flex flex-align-center mb-4">
-              <span className="mif-plus mif-3x fg-blue mr-4" />
-              <div>
-                <div className="text-leader2 text-bold fg-blue">Nouveau</div>
-                <div className="text-muted">Planifier une discussion</div>
-              </div>
-            </div>
-            <Link to="/planifier" className="button info small w-100">
-              Créer un salon
             </Link>
           </div>
         </div>

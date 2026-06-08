@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
 
-  const [mail, setMail]         = useState('');
+  const [mail, setMail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -85,7 +85,10 @@ export default function LoginPage() {
                     : <span className="mif-enter mr-2" />}
                   Se connecter
                 </button>
-                { /* TODO : mot de passe oublié ? */ }
+              </div>
+
+              <div className="text-center mt-4">
+                <Link to="/forgot-password">Mot de passe oublié ?</Link>
               </div>
             </form>
           </div>
