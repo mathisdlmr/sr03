@@ -5,11 +5,13 @@ import { createChat } from '../api/chatApi';
 export default function PlanifierPage() {
   const navigate = useNavigate();
 
-  const [title, setTitle]           = useState('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [error, setError]           = useState('');
-  const [success, setSuccess]       = useState('');
-  const [loading, setLoading]       = useState(false);
+  const [startsAt, setStartsAt] = useState('');
+  const [durationMinutes, setDurationMinutes] = useState(60);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,10 +22,17 @@ export default function PlanifierPage() {
     setError('');
     setLoading(true);
     try {
-      await createChat({ title: title.trim(), description: description.trim() });
+      await createChat({
+        title: title.trim(),
+        description: description.trim(),
+        startsAt: startsAt || null,
+        durationMinutes: durationMinutes || 60,
+      });
       setSuccess('Salon créé avec succès !');
       setTitle('');
       setDescription('');
+      setStartsAt('');
+      setDurationMinutes(60);
       setTimeout(() => navigate('/salons'), 1500);
     } catch {
       setError('Erreur lors de la création du salon... Veuillez réessayer.');
@@ -46,7 +55,7 @@ export default function PlanifierPage() {
             </div>
           )}
           {success && (
-            <div className="alert alert-success border-radius-2 mb-4">
+            <div className="success border-radius-2 mb-4">
               <span className="mif-checkmark mx-2" />
               {success}
             </div>
@@ -54,7 +63,7 @@ export default function PlanifierPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="label-for-input">Titre du salon *</label>
+              <label className="label-for-input">Titre du salon <span className="fg-red">*</span></label>
               <input
                 id="chat-title"
                 type="text"
@@ -74,12 +83,42 @@ export default function PlanifierPage() {
                 placeholder="Décrivez l'objet de cette discussion..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                rows={4}
+                rows={3}
                 style={{ width: '100%', resize: 'vertical' }}
               />
             </div>
 
-            <div className="form-group mt-6 d-flex flex-justify-between">
+            <div className="row mt-4">
+              <div className="cell-md-6">
+                <div className="form-group">
+                  <label className="label-for-input">Date et horaire</label>
+                  <input
+                    id="chat-starts-at"
+                    type="datetime-local"
+                    className="w-100"
+                    value={startsAt}
+                    onChange={(e) => setStartsAt(e.target.value)}
+                  />
+                  <small className="text-muted">Laissez vide pour une date de fin par défaut (+10 jours)</small>
+                </div>
+              </div>
+              <div className="cell-md-6">
+                <div className="form-group">
+                  <label className="label-for-input">Durée de validité (minutes)</label>
+                  <input
+                    id="chat-duration"
+                    type="number"
+                    className="w-100"
+                    min={1}
+                    value={durationMinutes}
+                    onChange={(e) => setDurationMinutes(parseInt(e.target.value) || 60)}
+                  />
+                  <small className="text-muted">Durée en minutes (ex. 60 = 1h, 1440 = 1 jour)</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group mt-6 d-flex flex-row flex-justify-between">
               <button
                 type="button"
                 className="button secondary"
