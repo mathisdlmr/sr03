@@ -4,9 +4,13 @@ import axios from 'axios';
 const API_URL = '/api';
 
 /**
- * Le fichier chatApi se base sur le fichier apiClient pour réaliser des requêtes au backend
+ * Le fichier apiCalls se base sur le fichier apiClient pour réaliser des requêtes au backend
  * Ce fichier permet donc simplement de définir des fonctions à partir de endpoints spécifiques
+ * Ce n'est donc qu'un condensé des endpoints que l'on retrouve dans `src/main/java/fr/utc/sr03/controller/ApiController.java`
  */
+
+// GET /api/auth/me - Récupérer les informations de l'utilisateur connecté
+export const getMe = () => apiGet('auth/me');
 
 // GET /api/chats/mine - Salons créés par l'utilisateur connecté
 export const getMyChats = () => apiGet('chats/mine');

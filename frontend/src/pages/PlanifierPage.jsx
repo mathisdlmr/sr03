@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createChat } from '../api/chatApi';
+import { createChat } from '../api/apiCalls';
 
 export default function PlanifierPage() {
   const navigate = useNavigate();

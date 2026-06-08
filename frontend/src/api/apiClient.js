@@ -1,13 +1,15 @@
 import axios from 'axios';
 
 /**
- * Le fichier apiClient est responsable de la communication avec l'API.
- * Il permet de normaliser les requêtes (GET, POST, DELETE) formulées au backend.
- * Dans le même temps, l'apiClient gère le retry en cas d'expiration d'access token.
+ * Le fichier apiClient est responsable de la communication avec l'API
+ * Il permet de normaliser les requêtes (GET, POST, DELETE) formulées au backend
+ * En particulier, il gère l'ajout du token d'accès dans les headers, et le rafraîchissement des tokens en cas d'expiration
  */
 
 const API_URL = '/api';
 
+// Fonction pour rafraîchir les tokens d'accès : envoie une requête POST à /api/auth/refresh avec le refresh token dans les headers
+// Si le rafraîchissement réussit, les nouveaux tokens sont stockés dans localStorage
 const refreshTokens = async () => {
   const refreshToken = localStorage.getItem('refresh_token');
   if (!refreshToken) {
@@ -28,6 +30,7 @@ const refreshTokens = async () => {
   }
 };
 
+// Fonction pour envoyer une requête GET à l'API (avec l'access token en header)
 export const apiGet = async (url) => {
   const accessToken = localStorage.getItem('access_token');
   const config = {
@@ -48,6 +51,8 @@ export const apiGet = async (url) => {
   }
 };
 
+// Fonction pour envoyer une requête POST à l'API (avec l'access token en header)
+// Le paramètre options permet de spécifier un content type différent (ex: application/json) si nécessaire
 export const apiPost = async (url, data, options = {}) => {
   const accessToken = localStorage.getItem('access_token');
   const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
@@ -70,6 +75,7 @@ export const apiPost = async (url, data, options = {}) => {
   }
 };
 
+// Fonction pour envoyer une requête DELETE à l'API (avec l'access token en header)
 export const apiDelete = async (url) => {
   const accessToken = localStorage.getItem('access_token');
   const config = {

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { uploadAvatar, deleteAvatar } from '../api/chatApi';
+import { uploadAvatar, deleteAvatar } from '../api/apiCalls';
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();

@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { formatTime } from '../utils/dateUtils';
+
 
 export default function ChatPage() {
   const { chatId } = useParams();
@@ -16,10 +18,12 @@ export default function ChatPage() {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  // Scroll automatique vers le bas à chaque nouveau message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Lorsque le composant est monté, on établit la connexion WebSocket au salon de chat
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
     if (!accessToken || !chatId) {
@@ -27,11 +31,13 @@ export default function ChatPage() {
       return;
     }
 
+    // On construit l'URL du WebSocket en fonction de l'environnement (ws:// en dev, wss:// en prod)
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsHost = window.location.hostname;
     const wsPort = '8080';
     const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}/ws/chat/${chatId}?token=${accessToken}`;
 
+    // On créé ensuite la WebSocket, puis on définit les handlers pour les différents événements (ouverture, message reçu, fermeture, erreur)
     const websocket = new WebSocket(wsUrl);
 
     websocket.onopen = () => {
@@ -68,6 +74,8 @@ export default function ChatPage() {
     };
   }, [chatId]);
 
+  // Fonction pour envoyer un message : 
+  // on vérifie que le message n'est pas vide et que la WebSocket est ouverte avant d'envoyer les données au serveur
   const sendMessage = useCallback(() => {
     if (!message.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
       return;
@@ -80,6 +88,7 @@ export default function ChatPage() {
     setMessage('');
   }, [message]);
 
+  // Permet d'envoyer le message en appuyant sur la touche "Entrée" (sans Shift, comme dans Messenger ou Slack sur ordinateur)
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -87,40 +96,34 @@ export default function ChatPage() {
     }
   };
 
+  // Fonction pour envoyer une image : 
+  // on vérifie que le fichier est bien une image et qu'il ne dépasse pas 5 Mo avant de le lire en base64 et de l'envoyer au serveur
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) {
       return;
     }
     if (!file.type.startsWith('image/')) {
-      alert('Seules les images sont acceptées.');
+      alert('Seules les images sont acceptées');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) { // 5 Mo max
-      alert('L\'image ne doit pas dépasser 5 Mo.');
+    if (file.size > 5 * 1024 * 1024) { // 5 Mo max, hypothèse subjective (on veut simplement éviter de recevoir un image de 500Mo...)
+      alert("L'image ne doit pas dépasser 5 Mo.");
       return;
     }
 
+    // On lit le fichier en base64 pour pouvoir l'envoyer directement dans la WebSocket
     const reader = new FileReader();
     reader.onload = () => {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({
           type: 'image',
-          imageData: reader.result, // base64 data URI
+          imageData: reader.result,
         }));
       }
     };
     reader.readAsDataURL(file);
-    // Reset le champ fichier
-    e.target.value = '';
-  };
-
-  // Formater le timestamp
-  const formatTime = (ts) => {
-    if (!ts) {
-      return '';
-    }
-    return new Date(ts).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    e.target.value = ''; // On réinitialise l'input à la fin
   };
 
   return (

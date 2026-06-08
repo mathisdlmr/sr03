@@ -10,6 +10,16 @@ export function formatDate(value) {
 	});
 }
 
+export function formatTime (value) {
+	if (!value) {
+		return '--';
+	}
+	return new Date(value).toLocaleTimeString('fr-FR', { 
+		hour: '2-digit', 
+		minute: '2-digit' 
+	});
+};
+
 // Formate un timestamp en date + heure lisibles
 export function formatDateTime(value) {
 	if (!value) {

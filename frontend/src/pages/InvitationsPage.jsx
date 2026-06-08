@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getInvitedChats } from '../api/chatApi';
+import { getInvitedChats } from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
 export default function InvitationsPage() {

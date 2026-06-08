@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
-import { login as apiLogin, getMe } from '../api/authApi';
+import { login as apiLogin } from '../api/authApi';
+import { getMe } from '../api/apiCalls';
 
 /**
  * Le fichier AuthContext est responsable de la gestion de l'état d'authentification de l'utilisateur
@@ -8,6 +9,7 @@ import { login as apiLogin, getMe } from '../api/authApi';
 
 export const AuthContext = createContext(null);
 
+// Le composant AuthProvider enveloppe l'application et fournit le contexte d'authentification à tous les composants enfants
 export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyChats, deleteChat } from '../api/chatApi';
+import { getMyChats, deleteChat } from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
 export default function SalonsPage() {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { getMyChats, getInvitedChats } from '../api/chatApi';
+import { getMyChats, getInvitedChats } from '../api/apiCalls';
 
 export default function HomePage() {
   const { user } = useAuth();
