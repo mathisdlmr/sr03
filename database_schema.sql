@@ -33,3 +33,25 @@ CREATE TABLE invitation (
 );
 
 INSERT INTO users VALUES (1,'Mathis', 'Delmaere', 'mathis.delmaere@etu.utc.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',true, true, NULL); /* password 123456789 */
+INSERT INTO users VALUES (2,'Auriane', 'Gaba', 'auriane.gaba@etu.utc.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',true, true, NULL); /* password 123456789 */
+INSERT INTO users VALUES (3,'Cédric', 'Martinet', 'cedric.matrinet@utc.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',true, true, NULL); /* password 123456789 */
+INSERT INTO users VALUES (4,'Jean', 'Javascript', 'jean.javascript@mail.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',false, true, NULL); /* password 123456789 */
+INSERT INTO users VALUES (5,'Garance', 'Go', 'garance.go@mail.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',false, true, NULL); /* password 123456789 */
+INSERT INTO users VALUES (6,'Phillipe', 'Php', 'phillipe.php@mail.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',false, true, NULL); /* password 123456789 */
+INSERT INTO users VALUES (7,'Césard', 'Css', 'cesard.css@mail.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',false, false, NULL); /* password 123456789 */
+INSERT INTO users VALUES (8,'Jada', 'Java', 'jad.java@mail.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',false, false, NULL); /* password 123456789 */
+INSERT INTO users VALUES (9,'Ruth', 'Rust', 'ruth.rust@mail.fr','$2a$10$x31VfKgf2YGSpeel6GjMBueIbH5RvADnkxS7HNJjxlGMMp6VYohNO',false, false, NULL); /* password 123456789 */
+
+INSERT INTO chat (id, title, description, ends_at, creator_id) VALUES (1, 'Projet Front', 'Discussion autour du frontend', '2026-12-31 23:59:59', 1);
+INSERT INTO chat (id, title, description, ends_at, creator_id) VALUES  (2, 'Projet Backend', 'Architecture et API', '2026-12-31 23:59:59', 1);
+INSERT INTO chat (id, title, description, ends_at, creator_id) VALUES  (3, 'Projet Infra', 'Infra Kubernetes ou Docker Swarm ?', '2026-12-31 23:59:59', 2);
+INSERT INTO chat (id, title, description, ends_at, creator_id) VALUES  (4, 'Migration PHP vers Node', 'Préparation de la migration', '2026-12-31 23:59:59', 2);
+INSERT INTO chat (id, title, description, ends_at, creator_id) VALUES  (5, 'Refonte CSS', 'Amélioration du design', '2026-12-31 23:59:59', 3);
+INSERT INTO chat (id, title, description, ends_at, creator_id) VALUES  (6, 'Java & Rust Club', 'Comparaison des langages', '2026-12-31 23:59:59', 3);
+
+INSERT INTO invitation (user_id, chat_id) VALUES (2, 1), (3, 1);
+INSERT INTO invitation (user_id, chat_id) VALUES (2, 2), (3, 2);
+INSERT INTO invitation (user_id, chat_id) VALUES (1, 3), (3, 3);
+INSERT INTO invitation (user_id, chat_id) VALUES (1, 4), (3, 4);
+INSERT INTO invitation (user_id, chat_id) VALUES (1, 5), (2, 5);
+INSERT INTO invitation (user_id, chat_id) VALUES (1, 6), (2, 6);
