@@ -14,9 +14,9 @@
 <body>
     <nav data-role="appbar" data-expand-point="md" class="border border-size-1 bd-gray shadow-normal">
         <ul class="app-bar-menu">
-            <li><a th:classappend="${!inactive ? ' active' : ''}" th:href="@{/listuser}"><span class="mif-home mr-1"></span> Accueil</a></li>
+            <li><a th:href="@{/listuser}"><span class="mif-home mr-1"></span> Accueil</a></li>
             <li><a th:href="@{/create}"><span class="mif-add-person mr-1"></span> Nouveau utilisateur</a></li>
-            <li><a th:classappend="${inactive ? ' active' : ''}" th:href="@{/listinactiveuser}"><span class="mif-uninstall mr-1"></span> Utilisateurs désactivés</a></li>
+            <li><a th:href="@{/listinactiveuser}"><span class="mif-uninstall mr-1"></span> Utilisateurs désactivés</a></li>
         </ul>
 
         <div class="app-bar-item-static mx-auto mt-2">
