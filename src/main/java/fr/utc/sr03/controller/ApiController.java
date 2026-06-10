@@ -287,6 +287,20 @@ public class ApiController {
     }
 
     /**
+     * GET /api/chats/{id}
+     * Recupère les informations d'un salon
+     */
+    @GetMapping("/chats/{id}")
+    public ResponseEntity<Chat> getChat(@PathVariable int id) {
+        Users user = getCurrentUser();
+        if (user == null) return ResponseEntity.status(401).build();
+
+        Chat chat = chatService.getChatById(id);
+        if (chat == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(chat);
+    }
+
+    /**
      * DELETE /api/chats/{id}
      * Supprime un salon si l'utilisateur connecté en est le créateur
      */

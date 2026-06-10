@@ -22,6 +22,9 @@ export const getInvitedChats = () => apiGet('chats/invited');
 // Body (JSON) : title: string, description: string, startsAt: string, durationMinutes: number
 export const createChat = (data) => apiPost('chats', data, { contentType: 'application/json' });
 
+// GET /api/chats/:id - Informations du salon
+export const getChat = (id) => apiGet(`chats/${id}`)
+
 // DELETE /api/chats/:id - Supprimer un salon
 export const deleteChat = (id) => apiDelete(`chats/${id}`);
 
