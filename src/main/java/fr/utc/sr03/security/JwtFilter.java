@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 // Puis on fait quelques vérifications avant de le connecter
                 // La vérification `SecurityContextHolder.getContext().getAuthentication() == null` permet de s'assurer qu'on n'écrase pas une authentification déjà présente
                 if (user != null && user.isActive() && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null);
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, List.of());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
