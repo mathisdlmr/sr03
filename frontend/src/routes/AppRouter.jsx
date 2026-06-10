@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useParams } from "react-router";
 import { useAuth } from '../hooks/useAuth';
 
 import AppLayout      from '../layouts/AppLayout';
@@ -7,6 +8,7 @@ import HomePage       from '../pages/HomePage';
 import PlanifierPage  from '../pages/PlanifierPage';
 import SalonsPage     from '../pages/SalonsPage';
 import InvitationsPage from '../pages/InvitationsPage';
+import ChatPageWebsocket from '../pages/ChatPage';
 
 // Redirige vers /login si non authentifié.
 // Affiche un spinner le temps que AuthContext vérifie le token stocké.
@@ -38,6 +40,7 @@ export default function AppRouter() {
           <Route path="/planifier" element={<PlanifierPage />} />
           <Route path="/salons" element={<SalonsPage />} />
           <Route path="/invitations" element={<InvitationsPage />} />
+          <Route path="/chat/:chatId" element={<ChatPageWebsocket />} />
         </Route>
 
         {/* Fallback vers /home pour toute route inconnue */ }

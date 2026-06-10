@@ -3,9 +3,11 @@ package fr.utc.sr03.services;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 
+@Service
 public class JakartaEmail {
 
     public JakartaEmail() {}

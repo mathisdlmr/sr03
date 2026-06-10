@@ -62,6 +62,7 @@ export default function SalonsPage() {
               <th>Description</th>
               <th>Créé le</th>
               <th>Se termine le</th>
+              <th>Discussion</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>
@@ -72,6 +73,7 @@ export default function SalonsPage() {
                 <td className="text-muted">{chat.description || '--'}</td>
                 <td>{formatDateTime(chat.createdAt)}</td>
                 <td>{formatDateTime(chat.endsAt)}</td>
+                <td><Link to={"/chat/"+chat.id}>Discuter</Link></td>
                 <td className="text-right">
                   <button
                     className="button small alert"
