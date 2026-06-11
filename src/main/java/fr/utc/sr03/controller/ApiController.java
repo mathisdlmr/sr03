@@ -365,6 +365,31 @@ public class ApiController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
+    /**
+     * DELETE /api/invitations/{chatId}
+     * Supprime l'invitation à un chat de l'utilisateur connecté
+     */
+    @DeleteMapping("/invitations/{chatId}")
+    public ResponseEntity<?> deleteInvitation(@PathVariable int chatId) {
+        Users user = getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Invitation invitation = invitationService.getInvitationByChatAndUserId(chat.getId(), user.getId());
+        if (invitation == null) {
+            return ResponseEntity.status(403).body(Map.of("error", "Vous n'êtes pas le créateur de ce salon."));
+        }
+
+        invitationService.deleteInvitation(invitation.getId());
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
     // ---------------------------//
     // ----- User endpoints ----- //
     // ---------------------------//
