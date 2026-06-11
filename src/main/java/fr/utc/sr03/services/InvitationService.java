@@ -23,6 +23,10 @@ public class InvitationService {
         return invitationRepository.findById(id).orElse(null);
     }
 
+    public Invitation getInvitationByChatAndUserId(int chat_id, int user_id) {
+        return invitationRepository.findInvitationByChatAndUserId(chat_id, user_id);
+    }
+
     public List<Invitation> getInvitationByUserId(int user_id) {
         return invitationRepository.findByUserId(user_id);
     }

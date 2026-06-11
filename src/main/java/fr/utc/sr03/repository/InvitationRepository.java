@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Integer> {
 
+    @Query("select i from Invitation i where i.chat.id = ?1 and i.user.id = ?2")
+    Invitation findInvitationByChatAndUserId(int chat_id, int user_id);
+
     @Query("select i from Invitation i where i.user.id = ?1")
     List<Invitation> findByUserId(int creator_id);
 
