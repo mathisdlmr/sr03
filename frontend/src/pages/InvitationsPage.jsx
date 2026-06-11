@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getInvitedChats } from '../api/apiCalls';
+import { deleteInviteUser, getInvitedChats} from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
 export default function InvitationsPage() {
@@ -13,6 +13,16 @@ export default function InvitationsPage() {
       .catch(() => setError('Impossible de charger vos invitations...'))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleDelete = async (idChat) => {
+    if (!confirm(`Supprimer l'invitation (vous n'aurez plus accès au salon) ?`)) return;
+    try {
+      await deleteInviteUser(idChat);
+      setChats((prev) => prev.filter((c) => c.id !== idChat));
+    } catch {
+      alert('Erreur lors de la suppression...');
+    }
+  };
 
   const openChat = (chatId) => {
     window.open(`/chat/${chatId}`);
@@ -58,11 +68,18 @@ export default function InvitationsPage() {
                 <td>{formatDateTime(chat.endsAt)}</td>
                 <td className="text-right">
                   <button
-                    className="button small info"
+                    className="button small info mr-2"
                     onClick={() => openChat(chat.id)}
                     title="Rejoindre le chat"
                   >
                     <span className="mif-chat mr-1" /> Rejoindre
+                  </button>
+                  <button
+                      className="button small alert"
+                      onClick={() => handleDelete(chat.id)}
+                      title="Supprimer l'invitation"
+                  >
+                    <span className="mif-switch" />
                   </button>
                 </td>
               </tr>
