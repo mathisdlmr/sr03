@@ -13,15 +13,13 @@ export default function SalonsPage() {
   const [error, setError] = useState('');
 
   const loadInvitedUsers = (chatId) => {
-    // récupère tous les utilisateurices qui sont invited au chat
     getInvitedUsersToChat(chatId)
         .then((data) => setInvitedUsers(data))
         .catch(() => setError('Impossible de charger les utilisateurices...'))
   }
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access_token');
-    if (!accessToken || !chatId) {
+    if (!chatId) {
       setError('Chat non trouvé.');
       return;
     }
@@ -85,14 +83,14 @@ export default function SalonsPage() {
                 name="search"
                 value={search}
                 onChange={(s) => setSearch(s.target.value)}
-                placeholder="Utilisateurices à rechercher... (minimum 2 caractères)"
+                placeholder="Rechercher des utilisateurices à ajouter... (minimum 2 caractères)"
             />
           </div>
           <div className="cell-md-2">
             <button
                 type="submit"
                 className="button info bg-blue fg-white w-100"
-                title="Rechercher des utilisateurices"
+                title="Rechercher des utilisateurices à ajouter"
             >
               Rechercher
             </button>
@@ -114,8 +112,6 @@ export default function SalonsPage() {
           </div>
         )}
 
-        <h2>Inviter au salon : </h2>
-
         {loading ? (
           <div className="d-flex flex-justify-center p-10">
             <span className="mif-spinner2 ani-spin mif-3x fg-blue" />
@@ -123,7 +119,7 @@ export default function SalonsPage() {
         ) : listUsers?.length === 0 ? (
           <div className="border border-size-1 border-radius-6 p-8 text-center text-muted mt-4">
             <span className="mif-users mif-4x d-block mb-4"></span>
-            <p className="text-leader">Recherchez des utilisateurices</p>
+            <p className="text-leader">Ajouter des utilisateurices</p>
           </div>
         ) : (
           <div className="row mt-6">
