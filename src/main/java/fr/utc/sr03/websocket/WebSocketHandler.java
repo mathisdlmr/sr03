@@ -169,6 +169,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if ("image".equals(incoming.getType())) {
             outgoing.setType("image");
             outgoing.setImageData(incoming.getImageData());
+        } else if ("file".equals(incoming.getType())) {
+            outgoing.setType("file");
+            outgoing.setFileData(incoming.getFileData());
+            outgoing.setFileName(incoming.getFileName());
+        } else if ("audio".equals(incoming.getType())) {
+            outgoing.setType("audio");
+            outgoing.setAudioData(incoming.getAudioData());
         } else {
             outgoing.setType("text");
             outgoing.setMessage(incoming.getMessage());

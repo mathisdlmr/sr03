@@ -7,12 +7,15 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageSocket {
 
-    private String type; // "text", "image", "system", "user_list", "kick"
+    private String type; // "text", "image", "file", "audio", "system", "user_list", "kick"
     private String user;
     private int userId;
     private String avatar;
     private String message;
-    private String imageData; // Si le type envoyé est "image"
+    private String imageData;  // Si le type envoyé est "image"
+    private String fileData;   // Si le type envoyé est "file" (encodé en base64)
+    private String fileName;   // Nom original du fichier envoyé si le type est "file"
+    private String audioData;  // Si le type envoyé est "audio" (message vocal encodé en base64)
     private long timestamp;
     private List<ConnectedUser> connectedUsers;
 
@@ -86,6 +89,30 @@ public class MessageSocket {
 
     public void setImageData(String imageData) {
         this.imageData = imageData;
+    }
+
+    public String getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(String fileData) {
+        this.fileData = fileData;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getAudioData() {
+        return audioData;
+    }
+
+    public void setAudioData(String audioData) {
+        this.audioData = audioData;
     }
 
     public long getTimestamp() {
