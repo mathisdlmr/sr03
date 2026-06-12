@@ -10,6 +10,14 @@ export default function Navbar() {
     navigate('/login');
   };
 
+  function MouseOver(event) {
+    event.target.style.borderRadius = '100%';
+    event.target.style.border = '2px solid #0000FF';
+  }
+  function MouseOut(event){
+    event.target.style.border='2px solid #FFFFFF';
+  }
+
   return (
     <header className="border border-size-1 bd-gray shadow-normal" data-role="appbar" data-expand-point="md">
       <ul className="app-bar-menu" style={{ fontSize: '14px' }}>
