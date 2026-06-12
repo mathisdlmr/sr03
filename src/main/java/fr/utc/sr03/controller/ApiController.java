@@ -404,6 +404,40 @@ public class ApiController {
     }
 
     /**
+     * DELETE /api/invitations/{userId}/{chatId}
+     * Supprime l'invitation d'un utilisateur à un chat (le demandeur doit être le créateur)
+     */
+    @DeleteMapping("/invitations/{userId}/{chatId}")
+    public ResponseEntity<?> deleteInvitationUser(@PathVariable int userId, @PathVariable int chatId) {
+        Users currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (chat.getCreator().getId() != currentUser.getId()) {
+            return ResponseEntity.status(403).body(Map.of("error", "Seul le créateur peut supprimer des membres."));
+        }
+
+        Users invitedUser = userService.getUserById(userId);
+        if (invitedUser == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Utilisateur introuvable."));
+        }
+
+        // On récupère l'invitation à supprimer
+        Invitation invitation = invitationService.getInvitationByChatAndUserId(chat.getId(), invitedUser.getId());
+        if (invitation == null) {
+            return ResponseEntity.status(403).body(Map.of("error", "Vous n'êtes pas invité de ce salon."));
+        }
+
+        invitationService.deleteInvitation(invitation.getId());
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    /**
      * DELETE /api/invitations/{chatId}
      * Supprime l'invitation à un chat de l'utilisateur connecté
      */
@@ -421,7 +455,7 @@ public class ApiController {
 
         Invitation invitation = invitationService.getInvitationByChatAndUserId(chat.getId(), user.getId());
         if (invitation == null) {
-            return ResponseEntity.status(403).body(Map.of("error", "Vous n'êtes pas le créateur de ce salon."));
+            return ResponseEntity.status(403).body(Map.of("error", "Vous n'êtes pas invité de ce salon."));
         }
 
         invitationService.deleteInvitation(invitation.getId());
