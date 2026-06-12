@@ -67,7 +67,7 @@
                     <td th:text="${u.mail}"></td>
                     <td>
                         <span th:if="${u.admin}" class="badge inline bg-blue fg-white" style="font-size: 0.9rem;">Admin</span>
-                        <span th:unless="${u.admin}" class="badge inline bg-gray fg-white">Utilisateur</span>
+                        <span th:unless="${u.admin}" class="badge inline bg-gray fg-white" style="font-size: 0.9rem;"   >Utilisateur</span>
                     </td>
                     <td>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
