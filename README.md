@@ -47,9 +47,12 @@ Pour l'interface Admin
 * Les requêtes sont traitées par `src/main/java/fr/utc/sr03/controller/WebController.java`
 
 D'un point de vue sécurité
-* On se prévient des attaques CSRF via les input `<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">` dans les formulaires qui sont ensuite automatiquement vérifiés par Sping Security et renvoient une 401 en cas d'erreur
-* On se prévient des attaques XSS grâce à Thymeleaf qui gère automatiquement l'échapement
-* On se prévient des injections SQL graĉe à la construction de requêtes SQL dans les repository via Injection de variables échappées et non via concaténation
+* On se prévient des attaques CSRF via les input `<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">` dans les formulaires qui sont ensuite vérifiés par Sping Security dans le `webFilterChain` et renvoient une 401 en cas d'erreur
+  * Basé sur https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html
+* On se prévient des attaques XSS grâce à Thymeleaf qui gère automatiquement l'échapement, sauf pour le champ `utext` qui n'a donc jamais été utilisé
+  * Basé sur https://rashidi.github.io/spring-boot-tutorials/main/web-thymeleaf-xss.html
+* On se prévient des injections SQL graĉe à la construction de requêtes SQL dans les repository JPA via Injection de variables positionnelles échappées et non via concaténation
+  * Basé sur https://stackoverflow.com/questions/73617743/is-springboot-data-jpa-repository-safe-against-sql-injection
 
 ### Interface Utilisateurice
 
@@ -76,9 +79,3 @@ D'un point de vue de sécurité
 * On se prévient des injections SQL de la même manière que pour l'interface Admin
 
 ## TODO 
-Fix les TODO
-Passer la ChatPage en MetroUI
-
-TD : 
-Seed la base de données avec plus de données
-Faire tout et n'importe quoi pour voir si ça casse
