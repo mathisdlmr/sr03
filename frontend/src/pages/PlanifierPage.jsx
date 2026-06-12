@@ -108,6 +108,7 @@ export default function PlanifierPage() {
                   <input
                     id="chat-duration"
                     type="number"
+                    data-role="input"
                     className="w-100"
                     min={1}
                     value={durationMinutes}
