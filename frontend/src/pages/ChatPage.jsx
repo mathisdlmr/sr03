@@ -9,13 +9,14 @@ export default function ChatPage() {
   const { chatId } = useParams();
   const { user } = useAuth();
 
-  const [chat, setChat]     = useState([]);
+  const [chat, setChat]     = useState({});
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const [connectedUsers, setConnectedUsers] = useState([]);
   const [message, setMessage] = useState('');
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState('');
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   const wsRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -25,6 +26,16 @@ export default function ChatPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // On ferme le menu ("...") à côté d'un utilisateur s'il est ouvert et qu'on clique en dehors
+  useEffect(() => {
+    if (!openMenuId) {
+      return;
+    }
+    const closeMenu = () => setOpenMenuId(null);
+    document.addEventListener('click', closeMenu);
+    return () => document.removeEventListener('click', closeMenu);
+  }, [openMenuId]);
 
   // Lorsque le composant est monté, on établit la connexion WebSocket au salon de chat
   useEffect(() => {
@@ -43,45 +54,54 @@ export default function ChatPage() {
     const wsPort = '8080';
     const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}/ws/chat/${chatId}?token=${accessToken}`;
 
-    // On créé ensuite la WebSocket, puis on définit les handlers pour les différents événements (ouverture, message reçu, fermeture, erreur)
-    const websocket = new WebSocket(wsUrl);
+    let cancelled = false;
+    let websocket = null;
 
-    websocket.onopen = () => {
-      setConnected(true);
-      setLoading(false);
-      setError('');
-    };
-
-    websocket.onmessage = (evt) => {
-      try {
-        const data = JSON.parse(evt.data);
-        if (data.type === 'user_list') {
-          setConnectedUsers(data.connectedUsers || []);
-        } else {
-          setMessages((prev) => [...prev, data]);
-        }
-      } catch {
-        setMessages((prev) => [...prev, { type: 'text', message: evt.data, timestamp: Date.now() }]);
+    const timer = setTimeout(() => {
+      if (cancelled) {
+        return;
       }
-    };
 
-    websocket.onclose = () => {
-      setConnected(false);
-    };
+      websocket = new WebSocket(wsUrl);
+      websocket.onopen = () => {
+        setConnected(true);
+        setLoading(false);
+        setError('');
+      };
 
-    websocket.onerror = () => {
-      setError('Erreur de connexion au salon...');
-      setConnected(false);
-    };
+      websocket.onmessage = (evt) => {
+        try {
+          const data = JSON.parse(evt.data);
+          if (data.type === 'user_list') {
+            setConnectedUsers(data.connectedUsers || []);
+          } else {
+            setMessages((prev) => [...prev, data]);
+          }
+        } catch {
+          setMessages((prev) => [...prev, { type: 'text', message: evt.data, timestamp: Date.now() }]);
+        }
+      };
 
-    wsRef.current = websocket;
+      websocket.onclose = () => {
+        setConnected(false);
+      };
+
+      websocket.onerror = () => {
+        setError('Erreur de connexion au salon...');
+        setConnected(false);
+      };
+
+      wsRef.current = websocket;
+    }, 0);
 
     return () => {
-      websocket.close();
+      cancelled = true;
+      clearTimeout(timer);
+      websocket?.close();
     };
   }, [chatId]);
 
-  // Fonction pour envoyer un message : 
+  // Fonction pour envoyer un message :
   // on vérifie que le message n'est pas vide et que la WebSocket est ouverte avant d'envoyer les données au serveur
   const sendMessage = useCallback(() => {
     if (!message.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
@@ -103,7 +123,7 @@ export default function ChatPage() {
     }
   };
 
-  // Fonction pour envoyer une image : 
+  // Fonction pour envoyer une image :
   // on vérifie que le fichier est bien une image et qu'il ne dépasse pas 5 Mo avant de le lire en base64 et de l'envoyer au serveur
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
@@ -115,7 +135,7 @@ export default function ChatPage() {
       return;
     }
     if (file.size > 5 * 1024 * 1024) { // 5 Mo max, hypothèse subjective (on veut simplement éviter de recevoir un image de 500Mo...)
-      alert("L'image ne doit pas dépasser 5 Mo.");
+      alert("L'image ne doit pas dépasser 5 Mo");
       return;
     }
 
@@ -133,6 +153,24 @@ export default function ChatPage() {
     e.target.value = ''; // On réinitialise l'input à la fin
   };
 
+  // Exclut un utilisateur connecté du salon (réservé au créateur et aux admins)
+  const handleKick = (targetUserId) => {
+    setOpenMenuId(null);
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    if (!confirm('Exclure cet utilisateur du salon ?')) {
+      return;
+    }
+    wsRef.current.send(JSON.stringify({
+      type: 'kick',
+      userId: targetUserId,
+    }));
+  };
+
+  // Le créateur du salon et les administrateurs peuvent exclure d'autres utilisateurs connectés
+  const isPrivileged = !!user && (user.admin || user.id === chat.creator_id);
+
   return (
     <div>
         {loading ? (
@@ -140,27 +178,14 @@ export default function ChatPage() {
               <span className="mif-spinner2 ani-spin mif-3x fg-blue" />
             </div>
         ) : (
-            <div style={{ display: 'flex', height: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{
-                  padding: '12px 20px',
-                  borderBottom: '1px solid #ddd',
-                  backgroundColor: '#f8f9fa',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
+            <div className="d-flex" style={{ height: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
+              <div className="d-flex flex-column" style={{ flex: 1 }}>
+                <div className="d-flex flex-align-center flex-justify-between p-3 bg-light" style={{ borderBottom: '1px solid #ddd' }}>
                   <div>
+                    <h3 className="m-0">
                       <span className="mif-chat mr-2 fg-blue" />
-                      {connected ? (
-                          <h3 style={{ margin: 0 }}>
-                            Salon #{chatId} :  {chat.title}
-                          </h3>
-                      ) : (
-                          <h3 style={{ margin: 0 }}>
-                            Salon : <span className="border-radius-2 mif-warning mrx-2" />
-                          </h3>
-                      )}
+                      Salon #{chatId} :  {chat.title}
+                    </h3>
                   </div>
                   <div>
                     {connected ? (
@@ -175,12 +200,7 @@ export default function ChatPage() {
                   </div>
                 </div>
 
-                <div style={{
-                  flex: 1,
-                  overflowY: 'auto',
-                  padding: '16px 20px',
-                  backgroundColor: '#fafafa',
-                }}>
+                <div className="p-3" style={{ flex: 1, overflowY: 'auto', backgroundColor: '#fafafa' }}>
                   {error && (
                       <div className="alert alert-warning border-radius-2 mb-4">
                         <span className="mif-warning mx-2" />{error}
@@ -210,22 +230,15 @@ export default function ChatPage() {
                     return (
                         <div
                             key={index}
-                            style={{
-                              display: 'flex',
-                              justifyContent: isMe ? 'flex-end' : 'flex-start',
-                              marginBottom: '12px',
-                            }}
+                            className={`d-flex mb-3 ${isMe ? 'flex-justify-end' : 'flex-justify-start'}`}
                         >
                           {!isMe && (
-                              <div style={{ marginRight: 8, flexShrink: 0 }}>
+                              <div className="mr-2" style={{ flexShrink: 0 }}>
                                 {msg.avatar ? (
                                     <img src={msg.avatar} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
                                 ) : (
-                                    <div style={{
-                                      width: 36, height: 36, borderRadius: '50%',
-                                      backgroundColor: '#4a90d9', color: '#fff',
-                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                      fontSize: 14, fontWeight: 'bold',
+                                    <div className="d-flex flex-align-center flex-justify-center bg-blue fg-white text-bold" style={{
+                                      width: 36, height: 36, borderRadius: '50%', fontSize: 14,
                                     }}>
                                       {msg.user?.[0] || '?'}
                                     </div>
@@ -235,15 +248,11 @@ export default function ChatPage() {
 
                           <div style={{ maxWidth: '70%' }}>
                             {!isMe && (
-                                <div style={{ fontSize: '12px', color: '#666', marginBottom: 2 }}>{msg.user}</div>
+                                <div className="text-muted mb-1" style={{ fontSize: '12px' }}>{msg.user}</div>
                             )}
-                            <div style={{
+                            <div className={`shadow-normal ${isMe ? 'bg-blue fg-white' : 'bg-white border border-size-1 bd-gray'}`} style={{
                               padding: msg.type === 'image' ? '6px' : '10px 14px',
                               borderRadius: isMe ? '16px 16px 0 16px' : '16px 16px 16px 0',
-                              backgroundColor: isMe ? '#4a90d9' : '#fff',
-                              color: isMe ? '#fff' : '#333',
-                              border: isMe ? 'none' : '1px solid #e0e0e0',
-                              boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
                               wordBreak: 'break-word',
                             }}>
                               {msg.type === 'image' ? (
@@ -257,7 +266,7 @@ export default function ChatPage() {
                                   msg.message
                               )}
                             </div>
-                            <div style={{ fontSize: '10px', color: '#999', marginTop: 2, textAlign: isMe ? 'right' : 'left' }}>
+                            <div className="text-muted mt-1" style={{ fontSize: '10px', textAlign: isMe ? 'right' : 'left' }}>
                               {formatTime(msg.timestamp)}
                             </div>
                           </div>
@@ -267,14 +276,7 @@ export default function ChatPage() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                <div style={{
-                  padding: '12px 20px',
-                  borderTop: '1px solid #ddd',
-                  backgroundColor: '#f8f9fa',
-                  display: 'flex',
-                  gap: '10px',
-                  alignItems: 'center',
-                }}>
+                <div className="d-flex flex-align-center gap-2 p-3 bg-light" style={{ borderTop: '1px solid #ddd' }}>
                   <input
                       type="file"
                       ref={fileInputRef}
@@ -310,40 +312,67 @@ export default function ChatPage() {
                   </button>
                 </div>
               </div>
-              <div style={{
-                  width: 220,
-                  borderLeft: '1px solid #ddd',
-                  backgroundColor: '#f8f9fa',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}>
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid #ddd' }}>
-                  <h4 style={{ margin: 0 }}>
+              <div className="d-flex flex-column bg-light" style={{ width: 240, borderLeft: '1px solid #ddd' }}>
+                <div className="p-3" style={{ borderBottom: '1px solid #ddd' }}>
+                  <h4 className="m-0">
                     <span className="mif-users mr-2" />
                     Connectés ({connectedUsers.length})
                   </h4>
                 </div>
-                <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px' }}>
+                <div className="p-2" style={{ flex: 1, overflowY: 'auto' }}>
                   {connectedUsers.map((u) => (
                       <div
                           key={u.id}
-                          className="d-flex flex-align-center mb-3"
+                          className="d-flex flex-align-center flex-justify-between mb-3 pos-relative"
                       >
-                        {u.avatar ? (
-                            <img src={u.avatar} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', marginRight: 8 }} />
-                        ) : (
-                            <div style={{
-                              width: 28, height: 28, borderRadius: '50%',
-                              backgroundColor: '#4a90d9', color: '#fff',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              fontSize: 12, fontWeight: 'bold', marginRight: 8, flexShrink: 0,
-                            }}>
-                              {u.firstname?.[0] || '?'}
+                        <div className="d-flex flex-align-center" style={{ minWidth: 0 }}>
+                          {u.avatar ? (
+                              <img src={u.avatar} alt="" className="mr-2" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                          ) : (
+                              <div className="d-flex flex-align-center flex-justify-center bg-blue fg-white text-bold mr-2" style={{
+                                width: 28, height: 28, borderRadius: '50%', fontSize: 12, flexShrink: 0,
+                              }}>
+                                {u.firstname?.[0] || '?'}
+                              </div>
+                          )}
+                          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                            <span style={{ fontSize: 13 }}>
+                              {u.firstname} {u.lastname}
+                            </span>
+                            <div>
+                              {u.id === chat.creator_id && (
+                                  <span className="badge inline bg-violet fg-white mr-1" style={{ fontSize: 10 }}>Creator</span>
+                              )}
+                              {u.admin && (
+                                  <span className="badge inline bg-blue fg-white" style={{ fontSize: 10 }}>Admin</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {isPrivileged && u.id !== user?.id && (
+                            <div className="pos-relative">
+                              <button
+                                  className="button square small"
+                                  title="Actions"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenMenuId(openMenuId === u.id ? null : u.id);
+                                  }}
+                              >
+                                <span className="mif-more-vert" />
+                              </button>
+                              {openMenuId === u.id && (
+                                  <ul className="d-menu shadow-normal" style={{ display: 'block', right: 0, top: '100%' }}>
+                                    <li>
+                                      <a href="#" onClick={(e) => { e.preventDefault(); handleKick(u.id); }}>
+                                        <span className="mif-remove-person mr-1" /> Exclure
+                                      </a>
+                                    </li>
+                                  </ul>
+                              )}
                             </div>
                         )}
-                        <span style={{ fontSize: 13 }}>
-                        {u.firstname} {u.lastname}
-                      </span>
                       </div>
                   ))}
                 </div>
