@@ -88,7 +88,7 @@ export default function SalonsPage() {
                       onClick={() => navigate(`/salons/invites/${chat.id}`)}
                       title="Inviter des utilisateurices"
                   >
-                    <span className="mif-person" />
+                    <span className="mif-person" /> Invitations
                   </button>
                   <button
                     className="button small info mr-2"
