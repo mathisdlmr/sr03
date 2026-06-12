@@ -14,7 +14,7 @@
 <body>
     <nav data-role="appbar" data-expand-point="md" class="border border-size-1 bd-gray shadow-normal">
         <ul class="app-bar-menu">
-            <li><a th:classappend="${!inactive ? ' active' : ''}" th:href="@{/listuser}"><span class="mif-home mr-1"></span> Accueil</a></li> <!--TODO : fix 2026-06-08T15:34:45.901Z ERROR 1 --- [io-8080-exec-10] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.thymeleaf.exceptions.TemplateProcessingException: Exception evaluating SpringEL expression: "!inactive ? ' active' : ''" (template: "edit_user" - line 17, col 20)] with root cause-->
+            <li><a th:classappend="${!inactive ? ' active' : ''}" th:href="@{/listuser}"><span class="mif-home mr-1"></span> Accueil</a></li>
             <li><a th:href="@{/create}"><span class="mif-add-person mr-1"></span> Nouveau utilisateur</a></li>
             <li><a th:classappend="${inactive ? ' active' : ''}" th:href="@{/listinactiveuser}"><span class="mif-uninstall mr-1"></span> Utilisateurs désactivés</a></li>
         </ul>

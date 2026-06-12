@@ -43,7 +43,7 @@ export default function Navbar() {
 
       <div className="app-bar-item-static ml-auto">
         {user && (
-          <NavLink to="/profil" className="d-flex flex-align-center" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <NavLink to="/profil" className="d-flex flex-align-center" style={{ textDecoration: 'none', color: 'inherit' }} onMouseOver={MouseOver} onMouseOut={MouseOut}>
             {user.avatar ? (
               <img
                 src={user.avatar}

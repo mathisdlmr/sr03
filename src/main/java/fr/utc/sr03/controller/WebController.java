@@ -252,7 +252,7 @@ public class WebController {
         if (check != null) {
             return check;
         }
-        Page<Users> usersPage = userService.getUsers(true, search, page, 10);
+        Page<Users> usersPage = userService.getUsers(true, search, page, 6);
         model.addAttribute("users", usersPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", usersPage.getTotalPages());
