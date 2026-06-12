@@ -70,6 +70,16 @@ public class UserService {
         return null;
     }
 
+    // Vérifie si l'utilisateur est le dernier compte admin actif
+    // (utilisé pour empêcher de le désactiver ou le supprimer, ce qui rendrait le panel admin inaccessible)
+    public boolean isLastActiveAdmin(Users user) {
+        return user.isAdmin() && user.isActive() && userRepository.countActiveAdmins() <= 1;
+    }
+
+    public long getActiveAdminCount() {
+        return userRepository.countActiveAdmins();
+    }
+
     // DELETE
     public void deleteUser(int id) {
         userRepository.deleteById(id);

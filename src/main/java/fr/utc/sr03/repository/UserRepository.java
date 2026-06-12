@@ -34,6 +34,9 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
     @Query("select u from Users u where u.active = true and (u.mail like ?1 or u.firstname like ?1 or u.lastname like ?1)")
     List<Users> searchUsers(String query);
 
+    @Query("select count(u) from Users u where u.admin = true and u.active = true")
+    long countActiveAdmins();
+
     @Modifying
     @Query("delete from Users u where u.mail = ?1")
     void deleteUserByEmail(String emailAddress);

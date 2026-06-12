@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
 
@@ -259,6 +260,7 @@ public class WebController {
         model.addAttribute("search", search);
         model.addAttribute("inactive", false);
         model.addAttribute("listUrl", "/listuser");
+        model.addAttribute("activeAdminCount", userService.getActiveAdminCount());
         return "users_list";
     }
 
@@ -275,6 +277,7 @@ public class WebController {
         model.addAttribute("search", search);
         model.addAttribute("inactive", true);
         model.addAttribute("listUrl", "/listinactiveuser");
+        model.addAttribute("activeAdminCount", userService.getActiveAdminCount());
         return "users_list";
     }
 
@@ -364,13 +367,17 @@ public class WebController {
     }
 
     @PostMapping("/toggleuser/{id}")
-    public String toggleUser(HttpSession session, @PathVariable int id, @RequestParam(defaultValue = "/listuser") String returnUrl) {
+    public String toggleUser(HttpSession session, @PathVariable int id, @RequestParam(defaultValue = "/listuser") String returnUrl, RedirectAttributes redirectAttributes) {
         String check = requireAdmin(session);
         if (check != null) {
             return check;
         }
         Users user = userService.getUserById(id);
         if (user != null) {
+            if (user.isActive() && userService.isLastActiveAdmin(user)) {
+                redirectAttributes.addFlashAttribute("error", "Impossible de désactiver le dernier compte administrateur.");
+                return "redirect:" + sanitizeReturnUrl(returnUrl);
+            }
             user.setActive(!user.isActive());
             userService.saveUser(user);
         }
@@ -378,10 +385,15 @@ public class WebController {
     }
 
     @PostMapping("/deleteuser/{id}")
-    public String deleteUser(HttpSession session, @PathVariable int id, @RequestParam(defaultValue = "/listuser") String returnUrl) {
+    public String deleteUser(HttpSession session, @PathVariable int id, @RequestParam(defaultValue = "/listuser") String returnUrl, RedirectAttributes redirectAttributes) {
         String check = requireAdmin(session);
         if (check != null) {
             return check;
+        }
+        Users user = userService.getUserById(id);
+        if (user != null && userService.isLastActiveAdmin(user)) {
+            redirectAttributes.addFlashAttribute("error", "Impossible de supprimer le dernier compte administrateur.");
+            return "redirect:" + sanitizeReturnUrl(returnUrl);
         }
         userService.deleteUser(id);
         return "redirect:" + sanitizeReturnUrl(returnUrl);
