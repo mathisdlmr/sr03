@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { getMyChats, deleteChat } from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
@@ -7,6 +7,7 @@ export default function SalonsPage() {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const loadChats = () => {
     setLoading(true);
@@ -57,7 +58,7 @@ export default function SalonsPage() {
         <div className="d-flex flex-justify-center p-10">
           <span className="mif-spinner2 ani-spin mif-3x fg-blue" />
         </div>
-      ) : chats.length === 0 ? (
+      ) : chats?.length === 0 ? (
         <div className="border border-size-1 border-radius-6 p-8 text-center text-muted">
           <span className="mif-chat mif-4x d-block mb-4" />
           Vous n'avez pas encore créé de salon.&nbsp;
@@ -82,6 +83,13 @@ export default function SalonsPage() {
                 <td>{formatDateTime(chat.createdAt)}</td>
                 <td>{formatDateTime(chat.endsAt)}</td>
                 <td className="text-right">
+                  <button
+                      className="button small info mr-2"
+                      onClick={() => navigate(`/salons/invites/${chat.id}`)}
+                      title="Inviter des utilisateurices"
+                  >
+                    <span className="mif-person" />
+                  </button>
                   <button
                     className="button small info mr-2"
                     onClick={() => openChat(chat.id)}

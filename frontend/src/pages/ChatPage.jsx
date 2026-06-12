@@ -151,10 +151,16 @@ export default function ChatPage() {
                   justifyContent: 'space-between',
                 }}>
                   <div>
-                    <h3 style={{ margin: 0 }}>
                       <span className="mif-chat mr-2 fg-blue" />
-                      Salon #{chatId} :  {chat.title}
-                    </h3>
+                      {connected ? (
+                          <h3 style={{ margin: 0 }}>
+                            Salon #{chatId} :  {chat.title}
+                          </h3>
+                      ) : (
+                          <h3 style={{ margin: 0 }}>
+                            Salon : <span className="border-radius-2 mif-warning mrx-2" />
+                          </h3>
+                      )}
                   </div>
                   <div>
                     {connected ? (

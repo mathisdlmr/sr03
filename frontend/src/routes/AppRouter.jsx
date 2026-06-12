@@ -11,6 +11,7 @@ import SalonsPage from '../pages/SalonsPage';
 import InvitationsPage from '../pages/InvitationsPage';
 import ChatPage from '../pages/ChatPage';
 import ProfilePage from '../pages/ProfilePage';
+import GestionInvitationsPage from '../pages/GestionInvitationsPage';
 
 // Redirige vers /login si non authentifié.
 // Affiche un spinner le temps que AuthContext vérifie le token stocké.
@@ -46,6 +47,7 @@ export default function AppRouter() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/planifier" element={<PlanifierPage />} />
           <Route path="/salons" element={<SalonsPage />} />
+          <Route path="/salons/invites/:chatId" element={<GestionInvitationsPage />} />
           <Route path="/invitations" element={<InvitationsPage />} />
           <Route path="/profil" element={<ProfilePage />} />
         </Route>
