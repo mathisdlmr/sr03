@@ -81,4 +81,17 @@ D'un point de vue de sécurité
   * Sauf dans le cas de l'innerHtml (https://stackoverflow.com/questions/33644499/what-does-it-mean-when-they-say-react-is-xss-protected), mais cet élément n'a pas été utilisé 
 * On se prévient des injections SQL de la même manière que pour l'interface Admin
 
-## TODO 
+### Quelques mots supplémentaires sur les attaques XSS
+
+Pour compléter prévenir les attaques XSS de toute part, il aurait fallut ajouter à la configuration de Spring Security : 
+```java
+  .headers(headers -> headers
+      .contentSecurityPolicy(policy -> policy.policyDirectives(API_CSP))
+      .xssProtection(xss -> xss.headerValue(ENABLED_MODE_BLOCK))
+  )
+```
+Cela aurait permis d'activer la protection contre les attaques XSS en définissant certaines policies que l'on accepterait, et en refusant tous les autres scripts. (https://www.baeldung.com/spring-prevent-xss)
+
+Cependant cela aurait demandé de définir des Content Security Policy (CSP) qui auraient été particulièrement verbeuses à rédiger pour accepter des styles et gestionnaire d'évènements (comme `confirm()`) en inline, des scripts et CSS de MetroUI, des fonts de GoogleAPI, etc. (https://www.baeldung.com/spring-security-csp)
+
+Au vu des protections déjà fournies par Thymeleaf et React nous ne les avons donc pas implémentées, mais pour un projet plus mature cela aurait pu être pertinent.
