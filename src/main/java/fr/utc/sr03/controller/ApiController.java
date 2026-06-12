@@ -483,7 +483,7 @@ public class ApiController {
         List<Users> users = userService.searchUsers(q.trim());
         List<Users.UserDTO> dtos = users.stream()
             .filter(u -> u.getId() != user.getId())
-                .filter(u -> !invitationService.isInvited(chatId, u.getId()))
+            .filter(u -> !invitationService.isInvited(chatId, u.getId()))
             .map(Users.UserDTO::from)
             .toList();
         return ResponseEntity.ok(dtos);
