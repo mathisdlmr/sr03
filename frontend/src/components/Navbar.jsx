@@ -10,14 +10,6 @@ export default function Navbar() {
     navigate('/login');
   };
 
-  function MouseOver(event) {
-    event.target.style.borderRadius = '100%';
-    event.target.style.border = '2px solid #0000FF';
-  }
-  function MouseOut(event){
-    event.target.style.border='2px solid #FFFFFF';
-  }
-
   return (
     <header className="border border-size-1 bd-gray shadow-normal" data-role="appbar" data-expand-point="md">
       <ul className="app-bar-menu" style={{ fontSize: '14px' }}>
@@ -51,15 +43,16 @@ export default function Navbar() {
 
       <div className="app-bar-item-static ml-auto">
         {user && (
-          <NavLink to="/profil" className="d-flex flex-align-center" style={{ textDecoration: 'none', color: 'inherit' }} onMouseOver={MouseOver} onMouseOut={MouseOut}>
+          <NavLink to="/profil" className="navbar-account-link d-flex flex-align-center" style={{ textDecoration: 'none', color: 'inherit' }}>
             {user.avatar ? (
               <img
                 src={user.avatar}
                 alt="avatar"
-                style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', marginRight: 8 }}
+                className="navbar-avatar"
+                style={{ width: 32, height: 32, objectFit: 'cover', marginRight: 8 }}
               />
             ) : (
-              <span className="mif-account-circle mif-4x fg-blue mr-2" />
+              <span className="navbar-avatar mif-account-circle mif-4x fg-blue mr-2" />
             )}
           </NavLink>
         )}

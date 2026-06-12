@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
   monospace;
 }
+
+.navbar-avatar {
+  border-radius: 100%;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+}
+
+.navbar-account-link:hover .navbar-avatar {
+  border-color: #0000FF;
+}
