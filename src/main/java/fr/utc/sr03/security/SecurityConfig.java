@@ -41,10 +41,6 @@ public class SecurityConfig {
         // - enfin on ajoute notre JwtFilter avant le filtre d'authentification de Spring Security
         http
             .securityMatcher("/api/**")
-            .headers(headers -> headers
-                .contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self'"))
-                .xssProtection(xss -> xss.headerValue(ENABLED_MODE_BLOCK))
-            )
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
@@ -66,10 +62,6 @@ public class SecurityConfig {
         // Sur ces routes on active le vérification des tokens csrf par Sping Security, mais on la désactive pour les WebSocket car elles dépendent du projet React et sont déjà protégées par l'utilisation de JWT
         http
             .securityMatcher("/**")
-            .headers(headers -> headers
-                .contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self'"))
-                .xssProtection(xss -> xss.headerValue(ENABLED_MODE_BLOCK))
-            )
             .csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**"))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
