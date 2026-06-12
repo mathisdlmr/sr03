@@ -63,7 +63,7 @@
                     <td th:text="${u.firstname}"></td>
                     <td th:text="${u.mail}"></td>
                     <td>
-                        <span th:if="${u.admin}" class="badge inline bg-blue fg-white">Admin</span>
+                        <span th:if="${u.admin}" class="badge inline bg-blue fg-white" style="font-size: 0.9rem;">Admin</span>
                         <span th:unless="${u.admin}" class="badge inline bg-gray fg-white">Utilisateur</span>
                     </td>
                     <td>
