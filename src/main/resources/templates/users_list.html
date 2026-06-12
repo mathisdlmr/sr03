@@ -32,7 +32,7 @@
         </div>
     </nav>
 
-    <main class="container mt-8">
+    <main class="container mt-8 mb-12">
         <h2 th:text="${inactive ? 'Utilisateurs désactivés' : 'Liste des utilisateurs'}">Liste des utilisateurs</h2>
         <form th:action="${listUrl}" class="row gap-1 my-4" method="get">
             <div class="cell-md-8">
@@ -46,7 +46,7 @@
             </div>
         </form>
 
-        <div class="row mt-6 mb-12">
+        <div class="row mt-6">
             <table class="table striped border row-hover row-border" th:if="${not #lists.isEmpty(users)}">
                 <thead>
                 <tr>
