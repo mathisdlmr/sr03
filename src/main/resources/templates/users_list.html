@@ -77,17 +77,21 @@
                             <form th:action="@{/toggleuser/{id}(id=${u.id})}" method="post" th:attr="data-confirm=${u.active ? 'Désactiver ce compte utilisateur ?' : 'Activer ce compte utilisateur ?'}" onsubmit="return confirm(this.dataset.confirm)" style="margin:0;">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <input type="hidden" name="returnUrl" th:value="${listUrl}">
-                                <button type="submit" th:disabled="${isLastAdmin}" th:title="${isLastAdmin ? 'Impossible de désactiver le dernier compte administrateur' : ''}" th:class="${u.active ? 'button small bg-orange fg-white w-100' : 'button small bg-green fg-white w-100'}">
-                                    <span th:class="${u.active ? 'mif-cancel mr-1' : 'mif-checkmark mr-1'}"></span>
-                                    <span th:text="${u.active ? 'Désactiver' : 'Activer'}"></span>
-                                </button>
+                                <span th:title="${isLastAdmin ? 'Impossible de désactiver le dernier compte administrateur' : ''}" style="display:block;">
+                                    <button type="submit" th:disabled="${isLastAdmin}" th:style="${isLastAdmin ? 'pointer-events: none;' : ''}" th:class="${isLastAdmin ? 'button small bg-dark-gray fg-white w-100' : (u.active ? 'button small bg-orange fg-white w-100' : 'button small bg-green fg-white w-100')}">
+                                        <span th:class="${u.active ? 'mif-cancel mr-1' : 'mif-checkmark mr-1'}"></span>
+                                        <span th:text="${u.active ? 'Désactiver' : 'Activer'}"></span>
+                                    </button>
+                                </span>
                             </form>
                             <form th:action="@{/deleteuser/{id}(id=${u.id})}" method="post" onsubmit="return confirm('Supprimer définitivement cet utilisateur ?')" style="margin:0; grid-column: span 2;">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <input type="hidden" name="returnUrl" th:value="${listUrl}">
-                                <button type="submit" th:disabled="${isLastAdmin}" th:title="${isLastAdmin ? 'Impossible de supprimer le dernier compte administrateur' : ''}" class="button small bg-red fg-white w-100">
-                                    <span class="mif-bin mr-1"></span> Supprimer
-                                </button>
+                                <span th:title="${isLastAdmin ? 'Impossible de supprimer le dernier compte administrateur' : ''}" style="display:block;">
+                                    <button type="submit" th:disabled="${isLastAdmin}" th:style="${isLastAdmin ? 'pointer-events: none;' : ''}" th:class="${isLastAdmin ? 'button small bg-dark-gray fg-white w-100' : 'button small bg-red fg-white w-100'}">
+                                        <span class="mif-bin mr-1"></span> Supprimer
+                                    </button>
+                                </span>
                             </form>
                         </div>
                     </td>
