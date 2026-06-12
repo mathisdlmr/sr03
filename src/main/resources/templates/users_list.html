@@ -2,6 +2,7 @@
 <html lang="fr" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - SR03</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,6 +51,7 @@
         </form>
 
         <div class="row mt-6">
+            <div style="overflow-x: auto; width: 100%;">
             <table class="table striped border row-hover row-border" th:if="${not #lists.isEmpty(users)}">
                 <thead>
                 <tr>
@@ -98,6 +100,7 @@
                 </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <div th:if="${#lists.isEmpty(users)}" class="border border-size-1 border-radius-6 p-8 text-center text-muted mt-4">
