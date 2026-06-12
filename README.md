@@ -47,6 +47,7 @@ Pour l'interface Admin
 * Les requêtes sont traitées par `src/main/java/fr/utc/sr03/controller/WebController.java`
 
 D'un point de vue sécurité
+* Les CORS ont été configurés
 * On se prévient des attaques CSRF via les input `<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">` dans les formulaires qui sont ensuite vérifiés par Sping Security dans le `webFilterChain` et renvoient une 401 en cas d'erreur
   * Basé sur https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html
 * On se prévient des attaques XSS grâce à Thymeleaf qui gère automatiquement l'échapement, sauf pour le champ `utext` qui n'a donc jamais été utilisé
@@ -75,7 +76,9 @@ Pour l'interface utilisateurice
 
 D'un point de vue de sécurité
 * On se prévient des attaques CSRF grâce à l'utilisation des JWT (voir ici)[https://medium.com/@gunawardena.buddika/jwts-csrf-tokens-465e5d4f91cf]
+  * L'idée est simplement que le token est stocké en localStorage et attaché en header Authorization, et qu'une application tierce ne peut forcer notre navigateur à l'injecter dans des requêtes qu'il aurait construit -> seule notre application peut récupérer ce token et authentifier ses requêtes avec
 * On se prévient des attaques XSS grâce à React qui gère automatiquement l'échappement
+  * Sauf dans le cas de l'innerHtml (https://stackoverflow.com/questions/33644499/what-does-it-mean-when-they-say-react-is-xss-protected), mais cet élément n'a pas été utilisé 
 * On se prévient des injections SQL de la même manière que pour l'interface Admin
 
 ## TODO 
