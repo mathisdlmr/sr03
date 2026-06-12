@@ -15,6 +15,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK;
+
 // Cette config de sécurité utilisée par le Middleware JWT a été inspirée de ce tutoriel en ligne sur la gestion de JWT avec Spring
 // https://www.cosmiclearn.com/spring_framework/rest_jwt_authentication.php
 // Nous avons ensuite rencontré des problèmes de CORS qui ont été réglés grâce à ce topic StackOverflow
@@ -31,6 +33,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         // Pour toutes les routes qui commencent par /api/, on applique cette configuration de sécurité : 
+        // - on définit des headers de protection contre les attaques XSS
         // - on désactive le CSRF (car on utilise des tokens JWT et pas des sessions), 
         // - on configure CORS pour autoriser les requêtes provenant de notre frontend, 
         // - on dit que les routes d'authentification sont accessibles sans être connecté mais que toutes les autres routes nécessitent une authentification, 
@@ -38,6 +41,10 @@ public class SecurityConfig {
         // - enfin on ajoute notre JwtFilter avant le filtre d'authentification de Spring Security
         http
             .securityMatcher("/api/**")
+            .headers(headers -> headers
+                .contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self'"))
+                .xssProtection(xss -> xss.headerValue(ENABLED_MODE_BLOCK))
+            )
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
@@ -56,8 +63,13 @@ public class SecurityConfig {
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
         // En deuxième lieu, pour toutes les autres routes (notamment les routes de l'interface admin), on applique cette configuration de sécurité : 
         // on autorise toutes les requêtes (car l'interface admin est protégée par une authentification HTTP Basic au niveau du controller, et pas par Spring Security)
+        // Sur ces routes on active le vérification des tokens csrf par Sping Security, mais on la désactive pour les WebSocket car elles dépendent du projet React et sont déjà protégées par l'utilisation de JWT
         http
             .securityMatcher("/**")
+            .headers(headers -> headers
+                .contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self'"))
+                .xssProtection(xss -> xss.headerValue(ENABLED_MODE_BLOCK))
+            )
             .csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**"))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
