@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams} from 'react-router-dom';
-import {getChat, getInvitedUsersToChat, inviteUser, searchUninvitedUsers} from '../api/apiCalls';
+import {deleteInviteUser, getChat, getInvitedUsersToChat, inviteUser, searchUninvitedUsers} from '../api/apiCalls';
 
 export default function SalonsPage() {
   const { chatId } = useParams();
@@ -60,6 +60,17 @@ export default function SalonsPage() {
 
   const resetSearch = () => {
     setSearch('')
+  };
+
+  const handleDeleteInvite = async (userId, chatId) => {
+    if (!confirm(`Retirer l'utilisateurice du chat ?`)) return;
+    try {
+      await deleteInviteUser(userId, chatId);
+      loadInvitedUsers(chatId);
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+    } catch {
+      alert('Erreur lors de la suppression...');
+    }
   };
 
   return (
@@ -174,7 +185,7 @@ export default function SalonsPage() {
                       <td className="text-right">
                         <button
                             className="button small alert mr-2"
-                            // TODO : onClick={() => handleDeleteInvite(user.id, chat.id)}
+                            onClick={() => handleDeleteInvite(user.id, chat.id)}
                             title="Retirer du chat"
                         >
                           <span className="mif-cross mr-1" /> Retirer

@@ -39,7 +39,10 @@ export const getInvitedUsersToChat = (idChat) => apiGet(`invitations/users/${idC
 export const inviteUser = (idUser, idChat) => apiPost('invitations', new URLSearchParams({ idUser, idChat }));
 
 // DELETE /api/invitations/{chatId} - Supprime l'invitation à un chat de l'utilisateur connecté
-export const deleteInviteUser = (idChat) => apiDelete(`invitations/${idChat}`);
+export const deleteInvite = (idChat) => apiDelete(`invitations/${idChat}`);
+
+// DELETE /api/invitations/{userId}/{chatId} - Supprime l'invitation d'un utilisateur à un chat
+export const deleteInviteUser = (idUser, idChat) => apiDelete(`invitations/${idUser}/${idChat}`);
 
 // GET /api/users/{chatId}/search?q=... - Recherche d'utilisateurs (pour l'autocomplétion)
 export const searchUninvitedUsers = (idChat, q) => apiGet(`users/${idChat}/search?q=${encodeURIComponent(q)}`);
