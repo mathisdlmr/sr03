@@ -7,7 +7,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageSocket {
 
-    private String type; // "text", "image", "system", "user_list"
+    private String type; // "text", "image", "system", "user_list", "kick"
     private String user;
     private int userId;
     private String avatar;
@@ -104,5 +104,5 @@ public class MessageSocket {
         this.connectedUsers = connectedUsers;
     }
 
-    public record ConnectedUser(int id, String firstname, String lastname, String avatar) {}
+    public record ConnectedUser(int id, String firstname, String lastname, String avatar, boolean admin) {}
 }

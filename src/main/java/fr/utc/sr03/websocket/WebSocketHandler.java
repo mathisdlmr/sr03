@@ -137,6 +137,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String payload = (String) message.getPayload();
         MessageSocket incoming = mapper.readValue(payload, MessageSocket.class);
 
+        if ("kick".equals(incoming.getType())) {
+            handleKick(chatId, user, incoming.getUserId());
+            return;
+        }
+
         // Puis on créé un nouveau message avec le payload et toutes les infos du user
         MessageSocket outgoing = new MessageSocket();
         outgoing.setUser(user.getFirstname() + " " + user.getLastname());
@@ -203,6 +208,28 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    // Exclut un utilisateur du salon : seul le créateur du salon ou un administrateur peut le faire
+    private void handleKick(String chatId, Users requester, int targetUserId) throws IOException {
+        boolean isOwner = chatService.isOwner(Integer.parseInt(chatId), requester.getId());
+        if (!isOwner && !requester.isAdmin()) {
+            return;
+        }
+
+        Set<WebSocketSession> sessions = chatSessions.get(chatId);
+        if (sessions == null) {
+            return;
+        }
+
+        for (WebSocketSession s : new HashSet<>(sessions)) {
+            Users target = sessionUsers.get(s.getId());
+            if (target != null && target.getId() == targetUserId && s.isOpen()) {
+                logger.info("Utilisateur " + target.getFirstname() + " " + target.getLastname() + " exclu du salon " + chatId + " par " + requester.getFirstname() + " " + requester.getLastname());
+                s.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Vous avez été exclu du salon par " + requester.getFirstname() + " " + requester.getLastname() + "."))));
+                s.close(CloseStatus.NORMAL);
+            }
+        }
+    }
+
     // Envoie la liste des utilisateurs connectés à tous les connectés d'un salon
     private void broadcastUserList(String chatId) throws IOException {
         Set<WebSocketSession> sessions = chatSessions.get(chatId);
@@ -215,7 +242,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         for (WebSocketSession s : sessions) {
             Users u = sessionUsers.get(s.getId());
             if (u != null) {
-                connectedUsers.add(new MessageSocket.ConnectedUser(u.getId(), u.getFirstname(), u.getLastname(), u.getAvatar()));
+                connectedUsers.add(new MessageSocket.ConnectedUser(u.getId(), u.getFirstname(), u.getLastname(), u.getAvatar(), u.isAdmin()));
             }
         }
 
