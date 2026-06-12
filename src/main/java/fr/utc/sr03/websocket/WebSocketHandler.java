@@ -133,6 +133,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // Vérification sur les droits d'accès au salon de chat
+        if (chatId != null) {
+            try {
+                int chatIdInt = Integer.parseInt(chatId);
+                boolean isOwner = chatService.isOwner(chatIdInt, user.getId());
+                boolean isInvited = invitationService.isInvited(chatIdInt, user.getId());
+                if (!isOwner && !isInvited) {
+                    session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Vous n'êtes pas autorisé à accéder à ce salon."))));
+                    session.close();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                session.close(CloseStatus.BAD_DATA);
+                return;
+            }
+        }
+
         // On lit le message envoyé par le client, qui est au format JSON
         String payload = (String) message.getPayload();
         MessageSocket incoming = mapper.readValue(payload, MessageSocket.class);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { deleteInviteUser, getInvitedChats} from '../api/apiCalls';
+import { deleteInvite, getInvitedChats} from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
 export default function InvitationsPage() {
@@ -17,7 +17,7 @@ export default function InvitationsPage() {
   const handleDelete = async (idChat) => {
     if (!confirm(`Supprimer l'invitation (vous n'aurez plus accès au salon) ?`)) return;
     try {
-      await deleteInviteUser(idChat);
+      await deleteInvite(idChat);
       setChats((prev) => prev.filter((c) => c.id !== idChat));
     } catch {
       alert('Erreur lors de la suppression...');
