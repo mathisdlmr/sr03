@@ -327,6 +327,44 @@ public class ApiController {
     // -----------------------------------------------------------//
 
     /**
+     * GET /api/invitations/{idChat}
+     * Récupère la liste des utilisateurices invited au chat
+     */
+    @GetMapping("/invitations/{idChat}")
+    public ResponseEntity<List<Invitation>> getInvitationsToChat(@PathVariable int idChat) {
+        Users currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Chat chat = chatService.getChatById(idChat);
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(invitationService.getInvitationByChatId(idChat));
+    }
+
+    /**
+     * GET /api/invitations/users/{chatId}
+     * Récupère la liste des utilisateurices invited au chat
+     */
+    @GetMapping("/invitations/users/{idChat}")
+    public ResponseEntity<List<Users>> getInvitedUsersToChat(@PathVariable int idChat) {
+        Users currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Chat chat = chatService.getChatById(idChat);
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(invitationService.getInvitedUsersByChatId(idChat));
+    }
+
+    /**
      * POST /api/invitations
      * Invite un utilisateur dans un salon (le demandeur doit être le créateur).
      */
@@ -395,11 +433,11 @@ public class ApiController {
     // ---------------------------//
 
     /**
-     * GET /api/users/search?q=...
+     * GET /api/users/{chatId}/search?q=...
      * Recherche d'utilisateurs par nom, prénom ou email (pour l'autocomplétion d'invitation par exemple)
      */
-    @GetMapping("/users/search")
-    public ResponseEntity<?> searchUsers(@RequestParam String q) {
+    @GetMapping("/users/{chatId}/search")
+    public ResponseEntity<?> searchUninvitedUsers(@PathVariable int chatId, @RequestParam String q) {
         Users user = getCurrentUser();
         if (user == null) {
             return ResponseEntity.status(401).build();
@@ -411,6 +449,7 @@ public class ApiController {
         List<Users> users = userService.searchUsers(q.trim());
         List<Users.UserDTO> dtos = users.stream()
             .filter(u -> u.getId() != user.getId())
+                .filter(u -> !invitationService.isInvited(chatId, u.getId()))
             .map(Users.UserDTO::from)
             .toList();
         return ResponseEntity.ok(dtos);
