@@ -79,7 +79,7 @@ export default function InvitationsPage() {
                       onClick={() => handleDelete(chat.id)}
                       title="Supprimer l'invitation"
                   >
-                    <span className="mif-switch" />
+                    <span className="mif-bin" />
                   </button>
                 </td>
               </tr>
