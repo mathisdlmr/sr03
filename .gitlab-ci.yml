@@ -18,6 +18,8 @@ build-backend:
 
 lint-frontend:
   stage: lint_frontend
+  tags:
+    - docker
   image: node:22
   before_script:
     - cd frontend
@@ -27,6 +29,8 @@ lint-frontend:
 
 build-frontend:
   stage: build_frontend
+  tags:
+    - docker
   image: node:22
   before_script:
     - cd frontend
