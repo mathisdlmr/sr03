@@ -1,0 +1,32 @@
+stages:
+  - build_backend
+  - lint_frontend
+  - build_frontend
+
+build-backend:
+  stage: build_backend
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - docker build -t backend-app .
+
+lint-frontend:
+  stage: lint_frontend
+  image: node:22
+  before_script:
+    - cd frontend
+    - npm install
+  script:
+    - npm run lint
+
+build-frontend:
+  stage: build_frontend
+  image: node:22
+  before_script:
+    - cd frontend
+    - npm install
+  script:
+    - npm run build
