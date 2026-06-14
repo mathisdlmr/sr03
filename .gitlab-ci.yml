@@ -5,13 +5,14 @@ stages:
 
 build-backend:
   stage: build_backend
-  image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
+  image:
+    name: gcr.io/kaniko-project/executor:latest
+    entrypoint: [""]
   script:
-    - docker build -t backend-app .
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination backend-app:latest
 
 lint-frontend:
   stage: lint_frontend
