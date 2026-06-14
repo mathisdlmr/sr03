@@ -49,6 +49,7 @@ export default function InvitationsPage() {
           Vous n'avez pas encore reçu d'invitation.
         </div>
       ) : (
+        <div style={{ overflowX: 'auto', width: '100%' }}>
         <table className="table border striped">
           <thead>
             <tr>
@@ -86,6 +87,7 @@ export default function InvitationsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

@@ -103,7 +103,7 @@ export default function ProfilePage() {
             <div>
               <h3 className="mb-1">{user?.firstname} {user?.lastname}</h3>
               <p className="text-muted mb-0">{user?.mail}</p>
-              <span className={`badge inline mt-2 ${user?.admin ? 'bg-blue fg-white' : 'bg-gray fg-white'}`}>
+              <span className={`badge inline mt-2 ${user?.admin ? 'bg-blue fg-white' : 'bg-gray fg-white'}`} style={{fontSize: "0.9rem"}}>
                 {user?.admin ? 'Administrateur' : 'Utilisateur'}
               </span>
             </div>

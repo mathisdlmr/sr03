@@ -65,6 +65,7 @@ export default function SalonsPage() {
           <Link to="/planifier">Créer votre premier salon</Link>
         </div>
       ) : (
+        <div style={{ overflowX: 'auto', width: '100%' }}>
         <table className="table border striped">
           <thead>
             <tr>
@@ -109,6 +110,7 @@ export default function SalonsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

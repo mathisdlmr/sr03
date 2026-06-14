@@ -123,6 +123,7 @@ export default function SalonsPage() {
           </div>
         ) : (
           <div className="row mt-6">
+            <div style={{ overflowX: 'auto', width: '100%' }}>
             <table className="table striped border row-hover row-border">
               <thead>
               <tr>
@@ -153,6 +154,7 @@ export default function SalonsPage() {
               ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
@@ -161,6 +163,7 @@ export default function SalonsPage() {
         { listInvitedUsers?.length !== 0  && (
           <div>
             <div className="row mt-6">
+              <div style={{ overflowX: 'auto', width: '100%' }}>
               <table className="table striped border row-hover row-border">
                 <thead>
                 <tr>
@@ -191,6 +194,7 @@ export default function SalonsPage() {
                 ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
