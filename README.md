@@ -35,6 +35,21 @@ Pour dire quelques mots sur le Makefile, disons simplement qu'il
 
 La raison pour cette architecture part du postulat que la majorité des devs on l'environnement nécessaire pour faire tourner React sur le pc (npm), mais que rares sont les gens qui possèdent de quoi compiler et/ou faire tourner du Java
 
+## CI/CD
+
+Pour des raisons de maintenance du code, 
+* Le Dockerfile permet de s'assurer que le backend java arrive bien à se build et à tourner
+* Prettierc et EsLint ont été setup sur le frontend pour automatiquement mettre en forme le code et vérifier les erreurs de syntaxe
+
+En parallèle, une CI GitLab a été setup pour, à chaque push, essayer de construire l'image Docker du backend, faire tourner EsLint sur le frontend, et essayer de build le frontend.
+On peut ainsi normaliser le code en ligne et s'assurer que le code sur le repo est fonctionnel
+
+Pour aller plus loin
+* On pourrait intégrer Prettierc à la CI en faisant en sorte que la CI pousse ses changements de mise en forme sur le repo (sinon l'étape tournerait dans le vent)
+* On pourrait mettre l'image docker sur un registry GitLab
+* On pourrait mettre le frontend buildé en artifcat GitLab
+* On pourrait ajouter du CD en déployant le projet directement sur un Docker Swarm ou Kubernetes
+
 ## Détails sur le Backend
 
 Comme mentionné précédement, le Backend est à la fois utilisé pour l'interface Admin, et à la fois pour traiter les requêtes API de React pour l'interface utilisateurice
@@ -95,3 +110,18 @@ Cela aurait permis d'activer la protection contre les attaques XSS en définissa
 Cependant cela aurait demandé de définir des Content Security Policy (CSP) qui auraient été particulièrement verbeuses à rédiger pour accepter des styles et gestionnaire d'évènements (comme `confirm()`) en inline, des scripts et CSS de MetroUI, des fonts de GoogleAPI, etc. (https://www.baeldung.com/spring-security-csp)
 
 Au vu des protections déjà fournies par Thymeleaf et React nous ne les avons donc pas implémentées, mais pour un projet plus mature cela aurait pu être pertinent.
+
+## Détails sur le Frontend
+
+Le frontend comporte le features suivantes : 
+* Voir ses chats, gérer les membres (en inviter ou en supprimer), et rejoindre les chats en question
+* Voir les chats où l'on a été invité, avec possibilité de les rejoindre ou de les quitter
+* Créer un nouveau chat avec un datetime de début et une durée en minutes
+* Sur un Chat
+  * Envoie de messages
+  * Envoie de photos (<5Mo)
+  * Envoie des fichiers (<5Mo)
+  * Envoie de messages vocaux
+  * Pour les admin et créateur du chat, la possibilité de kick une personne du chat
+  * Historique du Chat en RAM, lorsque l'on rejoint le chat on récupère alors tout l'historique
+* Pouvoir modifier son avatar avec une photo (<1Mo)
