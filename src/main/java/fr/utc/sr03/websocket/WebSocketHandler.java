@@ -22,6 +22,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private final Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
 
+    // On créé une map pour stocker en mémoire l'historique des messages envoyés et pouvoir tout renvoyer lors du reconnexion
+    private final Map<String, List<MessageSocket>> chatHistory = new ConcurrentHashMap<>();
+
     // chatId -> Set de sessions connectées à ce salon ("qui est connecté à quel salon ?")
     private final Map<String, Set<WebSocketSession>> chatSessions = new ConcurrentHashMap<>();
     // sessionId -> infos utilisateurs connectés ("cette session appartient à quel utilisateur ?")
@@ -68,6 +71,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         return null;
+    }
+
+    // A partir d'un chatId et d'une socket ouverte, on récupère l'entièreté des messages envoyés
+    // sur ce chat et on renvoie tout l'historique
+    private void sendChatHistory(String chatId, WebSocketSession session) throws IOException {
+        List<MessageSocket> history = chatHistory.get(chatId);
+        if (history == null || history.isEmpty()) {
+            return;
+        }
+
+        for (MessageSocket msg : history) {
+            session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+        }
     }
 
     @Override
@@ -118,6 +134,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             chatSessions.put(chatId, sessions);
         }
         sessions.add(session);
+
+        // On envoie à l'utilisateur tous les messages précédemment envoyés sur le chat
+        sendChatHistory(chatId, session);
 
         // Puis on notifie les autres connectés du salon que ce user a rejoint le chat
         logger.info("Utilisateur " + user.getFirstname() + " " + user.getLastname() + " connecté au salon " + chatId);
@@ -180,6 +199,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             outgoing.setType("text");
             outgoing.setMessage(incoming.getMessage());
         }
+
+        // On ajoute le message sortant à notre historique de messages
+        chatHistory.computeIfAbsent(chatId, k -> new ArrayList<>()).add(outgoing);
 
         // On broadcast finalement le message à tous les connectés du salon
         broadcastToChat(chatId, outgoing);
