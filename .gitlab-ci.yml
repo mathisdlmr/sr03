@@ -8,13 +8,13 @@ build-backend:
   tags:
     - docker
   image:
-    name: gcr.io/kaniko-project/executor:latest
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
   script:
     - /kaniko/executor
       --context $CI_PROJECT_DIR
       --dockerfile $CI_PROJECT_DIR/Dockerfile
-      --destination backend-app:latest
+      --no-push
 
 lint-frontend:
   stage: lint_frontend
