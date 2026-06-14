@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
-import { useParams} from 'react-router-dom';
-import {deleteInviteUser, getChat, getInvitedUsersToChat, inviteUser, searchUninvitedUsers} from '../api/apiCalls';
+import { useParams } from 'react-router-dom';
+import {
+  deleteInviteUser,
+  getChat,
+  getInvitedUsersToChat,
+  inviteUser,
+  searchUninvitedUsers,
+} from '../api/apiCalls';
 
 export default function SalonsPage() {
   const { chatId } = useParams();
 
   const [loading, setLoading] = useState(true);
-  const [chat, setChat]     = useState([]);
+  const [chat, setChat] = useState([]);
   const [listUsers, setUsers] = useState([]);
   const [listInvitedUsers, setInvitedUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
 
-  const loadInvitedUsers = (chatId) => {
+  const loadInvitedUsers = chatId => {
     getInvitedUsersToChat(chatId)
-        .then((data) => setInvitedUsers(data))
-        .catch(() => setError('Impossible de charger les utilisateurices...'))
-  }
+      .then(data => setInvitedUsers(data))
+      .catch(() => setError('Impossible de charger les utilisateurices...'));
+  };
 
   useEffect(() => {
     if (!chatId) {
@@ -26,38 +32,37 @@ export default function SalonsPage() {
 
     // On récupère le chat
     getChat(chatId)
-        .then((data) => setChat(data))
-        .catch(() => setError('Impossible de charger le chat...'))
+      .then(data => setChat(data))
+      .catch(() => setError('Impossible de charger le chat...'));
 
     loadInvitedUsers(chatId);
     setLoading(false);
-
   }, [chatId]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     searchUninvitedUsers(chatId, search)
-        .then((data) => setUsers(data))
-        .catch(() => setError('Impossible de chercher les utilisateuricess invites...'))
-        .finally(() => setLoading(false));
+      .then(data => setUsers(data))
+      .catch(() => setError('Impossible de chercher les utilisateuricess invites...'))
+      .finally(() => setLoading(false));
   };
 
-  const toggleInvite = async (userId) => {
+  const toggleInvite = async userId => {
     if (!confirm(`Inviter l'utilisateurice au salon ?`)) return;
     try {
       await inviteUser(userId, chatId);
       loadInvitedUsers(chatId);
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      setUsers(prev => prev.filter(u => u.id !== userId));
     } catch {
       alert(`Erreur lors de l'ajout...`);
     }
-  }
+  };
 
   const resetSearch = () => {
-    setSearch('')
+    setSearch('');
   };
 
   const handleDeleteInvite = async (userId, chatId) => {
@@ -65,7 +70,7 @@ export default function SalonsPage() {
     try {
       await deleteInviteUser(userId, chatId);
       loadInvitedUsers(chatId);
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      setUsers(prev => prev.filter(u => u.id !== userId));
     } catch {
       alert('Erreur lors de la suppression...');
     }
@@ -78,29 +83,25 @@ export default function SalonsPage() {
         <form onSubmit={handleSubmit} className="row my-4">
           <div className="cell-md-8">
             <input
-                type="text"
-                className="w-100"
-                name="search"
-                value={search}
-                onChange={(s) => setSearch(s.target.value)}
-                placeholder="Rechercher des utilisateurices à ajouter... (minimum 2 caractères)"
+              type="text"
+              className="w-100"
+              name="search"
+              value={search}
+              onChange={s => setSearch(s.target.value)}
+              placeholder="Rechercher des utilisateurices à ajouter... (minimum 2 caractères)"
             />
           </div>
           <div className="cell-md-2">
             <button
-                type="submit"
-                className="button info bg-blue fg-white w-100"
-                title="Rechercher des utilisateurices à ajouter"
+              type="submit"
+              className="button info bg-blue fg-white w-100"
+              title="Rechercher des utilisateurices à ajouter"
             >
               Rechercher
             </button>
           </div>
           <div className="cell-md-2">
-            <button
-                className="button w-100"
-                onClick={() => resetSearch()}
-                title="Réinitialiser"
-            >
+            <button className="button w-100" onClick={() => resetSearch()} title="Réinitialiser">
               Réinitialiser
             </button>
           </div>
@@ -108,7 +109,8 @@ export default function SalonsPage() {
 
         {error && (
           <div className="alert alert-warning border-radius-2 mb-4">
-            <span className="mif-warning mx-2" />{error}
+            <span className="mif-warning mx-2" />
+            {error}
           </div>
         )}
 
@@ -124,76 +126,76 @@ export default function SalonsPage() {
         ) : (
           <div className="row mt-6">
             <div style={{ overflowX: 'auto', width: '100%' }}>
-            <table className="table striped border row-hover row-border">
-              <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Email</th>
-                <th style={{ width: '220px'}} className="text-right">
-                  Actions
-                </th>
-              </tr>
-              </thead>
-              <tbody>
-              {listUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.lastname}</td>
-                    <td>{user.firstname}</td>
-                    <td>{user.mail}</td>
-                    <td className="text-right">
-                      <button
-                          className="button small info mr-2"
-                          onClick={() => toggleInvite(user.id)}
-                          title="Inviter au chat"
-                      >
-                        <span className="mif-plus mr-1" /> Inviter
-                      </button>
-                    </td>
-                  </tr>
-              ))}
-              </tbody>
-            </table>
-            </div>
-          </div>
-        )}
-
-        <h2>Invité.es du salon : </h2>
-
-        { listInvitedUsers?.length !== 0  && (
-          <div>
-            <div className="row mt-6">
-              <div style={{ overflowX: 'auto', width: '100%' }}>
               <table className="table striped border row-hover row-border">
                 <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>Prénom</th>
-                  <th>Email</th>
-                  <th style={{ width: '220px'}} className="text-right">
-                    Actions
-                  </th>
-                </tr>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th style={{ width: '220px' }} className="text-right">
+                      Actions
+                    </th>
+                  </tr>
                 </thead>
                 <tbody>
-                {listInvitedUsers.map((user) => (
+                  {listUsers.map(user => (
                     <tr key={user.id}>
                       <td>{user.lastname}</td>
                       <td>{user.firstname}</td>
                       <td>{user.mail}</td>
                       <td className="text-right">
                         <button
-                            className="button small alert mr-2"
-                            onClick={() => handleDeleteInvite(user.id, chat.id)}
-                            title="Retirer du chat"
+                          className="button small info mr-2"
+                          onClick={() => toggleInvite(user.id)}
+                          title="Inviter au chat"
                         >
-                          <span className="mif-cross mr-1" /> Retirer
+                          <span className="mif-plus mr-1" /> Inviter
                         </button>
                       </td>
                     </tr>
-                ))}
+                  ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        <h2>Invité.es du salon : </h2>
+
+        {listInvitedUsers?.length !== 0 && (
+          <div>
+            <div className="row mt-6">
+              <div style={{ overflowX: 'auto', width: '100%' }}>
+                <table className="table striped border row-hover row-border">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Prénom</th>
+                      <th>Email</th>
+                      <th style={{ width: '220px' }} className="text-right">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {listInvitedUsers.map(user => (
+                      <tr key={user.id}>
+                        <td>{user.lastname}</td>
+                        <td>{user.firstname}</td>
+                        <td>{user.mail}</td>
+                        <td className="text-right">
+                          <button
+                            className="button small alert mr-2"
+                            onClick={() => handleDeleteInvite(user.id, chat.id)}
+                            title="Retirer du chat"
+                          >
+                            <span className="mif-cross mr-1" /> Retirer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

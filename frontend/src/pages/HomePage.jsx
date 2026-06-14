@@ -10,10 +10,10 @@ export default function HomePage() {
 
   useEffect(() => {
     getMyChats()
-      .then((data) => setOwnedCount(data.length))
+      .then(data => setOwnedCount(data.length))
       .catch(() => setOwnedCount('?'));
     getInvitedChats()
-      .then((data) => setInvitedCount(data.length))
+      .then(data => setInvitedCount(data.length))
       .catch(() => setInvitedCount('?'));
   }, []);
 
@@ -46,7 +46,9 @@ export default function HomePage() {
               <span className="mif-chat mif-3x fg-blue mr-4" />
               <div>
                 <div className="text-leader2 text-bold fg-blue">{ownedCount}</div>
-                <div className="text-muted">Salon{ownedCount !== 1 ? 's' : ''} créé{ownedCount !== 1 ? 's' : ''}</div>
+                <div className="text-muted">
+                  Salon{ownedCount !== 1 ? 's' : ''} créé{ownedCount !== 1 ? 's' : ''}
+                </div>
               </div>
             </div>
             <Link to="/salons" className="button info small w-100">
@@ -61,7 +63,9 @@ export default function HomePage() {
               <span className="mif-mail mif-3x fg-blue mr-4" />
               <div>
                 <div className="text-leader2 text-bold fg-blue">{invitedCount}</div>
-                <div className="text-muted">Invitation{invitedCount !== 1 ? 's' : ''} reçue{invitedCount !== 1 ? 's' : ''}</div>
+                <div className="text-muted">
+                  Invitation{invitedCount !== 1 ? 's' : ''} reçue{invitedCount !== 1 ? 's' : ''}
+                </div>
               </div>
             </div>
             <Link to="/invitations" className="button info small w-100">

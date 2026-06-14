@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getMyChats, deleteChat } from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
@@ -12,7 +12,7 @@ export default function SalonsPage() {
   const loadChats = () => {
     setLoading(true);
     getMyChats()
-      .then((data) => setChats(data))
+      .then(data => setChats(data))
       .catch(() => setError('Impossible de charger vos salons...'))
       .finally(() => setLoading(false));
   };
@@ -21,17 +21,17 @@ export default function SalonsPage() {
     loadChats();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async id => {
     if (!confirm('Supprimer ce salon ?')) return;
     try {
       await deleteChat(id);
-      setChats((prev) => prev.filter((c) => c.id !== id));
+      setChats(prev => prev.filter(c => c.id !== id));
     } catch {
       alert('Erreur lors de la suppression...');
     }
   };
 
-  const openChat = (chatId) => {
+  const openChat = chatId => {
     window.open(`/chat/${chatId}`);
   };
 
@@ -50,7 +50,8 @@ export default function SalonsPage() {
 
       {error && (
         <div className="alert alert-warning border-radius-2 mb-4">
-          <span className="mif-warning mx-2" />{error}
+          <span className="mif-warning mx-2" />
+          {error}
         </div>
       )}
 
@@ -66,50 +67,50 @@ export default function SalonsPage() {
         </div>
       ) : (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-        <table className="table border striped">
-          <thead>
-            <tr>
-              <th>Titre</th>
-              <th>Description</th>
-              <th>Créé le</th>
-              <th>Se termine le</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {chats.map((chat) => (
-              <tr key={chat.id}>
-                <td className="text-bold">{chat.title}</td>
-                <td className="text-italic">{chat.description || '--'}</td>
-                <td>{formatDateTime(chat.createdAt)}</td>
-                <td>{formatDateTime(chat.endsAt)}</td>
-                <td className="text-right">
-                  <button
+          <table className="table border striped">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Créé le</th>
+                <th>Se termine le</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chats.map(chat => (
+                <tr key={chat.id}>
+                  <td className="text-bold">{chat.title}</td>
+                  <td className="text-italic">{chat.description || '--'}</td>
+                  <td>{formatDateTime(chat.createdAt)}</td>
+                  <td>{formatDateTime(chat.endsAt)}</td>
+                  <td className="text-right">
+                    <button
                       className="button small info mr-2"
                       onClick={() => navigate(`/salons/invites/${chat.id}`)}
                       title="Inviter des utilisateurices"
-                  >
-                    <span className="mif-person" /> Invitations
-                  </button>
-                  <button
-                    className="button small info mr-2"
-                    onClick={() => openChat(chat.id)}
-                    title="Rejoindre le chat"
-                  >
-                    <span className="mif-chat mr-1" /> Rejoindre
-                  </button>
-                  <button
-                    className="button small alert"
-                    onClick={() => handleDelete(chat.id)}
-                    title="Supprimer"
-                  >
-                    <span className="mif-bin" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    >
+                      <span className="mif-person" /> Invitations
+                    </button>
+                    <button
+                      className="button small info mr-2"
+                      onClick={() => openChat(chat.id)}
+                      title="Rejoindre le chat"
+                    >
+                      <span className="mif-chat mr-1" /> Rejoindre
+                    </button>
+                    <button
+                      className="button small alert"
+                      onClick={() => handleDelete(chat.id)}
+                      title="Supprimer"
+                    >
+                      <span className="mif-bin" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

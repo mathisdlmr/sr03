@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { formatDuration } from '../utils/dateUtils';
 
-// On créé un component spécifique pour les messages audio étant donné que 
+// On créé un component spécifique pour les messages audio étant donné que
 // le component en lui-même embarque pas mal de style
 // Note : ce component a été généré par IA
 export default function VoiceMessageBubble({ src, isMe }) {
@@ -61,18 +61,23 @@ export default function VoiceMessageBubble({ src, isMe }) {
         ))}
       </div>
 
-      <span style={{ fontSize: 11, flexShrink: 0 }}>
-        {formatDuration(displayTime)}
-      </span>
+      <span style={{ fontSize: 11, flexShrink: 0 }}>{formatDuration(displayTime)}</span>
 
       <audio
         ref={audioRef}
         src={src}
-        onPlay={() => { setPlaying(true); setHasStarted(true); }}
+        onPlay={() => {
+          setPlaying(true);
+          setHasStarted(true);
+        }}
         onPause={() => setPlaying(false)}
-        onEnded={() => { setPlaying(false); setHasStarted(false); setProgress(0); }}
-        onLoadedMetadata={(e) => setDuration(e.target.duration)}
-        onTimeUpdate={(e) => setProgress(e.target.currentTime)}
+        onEnded={() => {
+          setPlaying(false);
+          setHasStarted(false);
+          setProgress(0);
+        }}
+        onLoadedMetadata={e => setDuration(e.target.duration)}
+        onTimeUpdate={e => setProgress(e.target.currentTime)}
         style={{ display: 'none' }}
       />
     </div>

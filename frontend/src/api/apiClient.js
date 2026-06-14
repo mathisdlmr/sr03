@@ -31,7 +31,7 @@ const refreshTokens = async () => {
 };
 
 // Fonction pour envoyer une requête GET à l'API (avec l'access token en header)
-export const apiGet = async (url) => {
+export const apiGet = async url => {
   const accessToken = localStorage.getItem('access_token');
   const config = {
     headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
@@ -76,7 +76,7 @@ export const apiPost = async (url, data, options = {}) => {
 };
 
 // Fonction pour envoyer une requête DELETE à l'API (avec l'access token en header)
-export const apiDelete = async (url) => {
+export const apiDelete = async url => {
   const accessToken = localStorage.getItem('access_token');
   const config = {
     headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},

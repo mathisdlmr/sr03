@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleAvatarUpload = async (e) => {
+  const handleAvatarUpload = async e => {
     const file = e.target.files?.[0];
     if (!file) {
       setError('Aucun fichier sélectionné.');
@@ -72,12 +72,14 @@ export default function ProfilePage() {
         <div className="border border-size-1 border-radius-6 p-8 shadow-normal">
           {error && (
             <div className="alert alert-warning border-radius-2 mb-4">
-              <span className="mif-warning mx-2" />{error}
+              <span className="mif-warning mx-2" />
+              {error}
             </div>
           )}
           {success && (
             <div className="success border-radius-2 mb-4">
-              <span className="mif-checkmark mx-2" />{success}
+              <span className="mif-checkmark mx-2" />
+              {success}
             </div>
           )}
 
@@ -87,23 +89,43 @@ export default function ProfilePage() {
                 <img
                   src={user.avatar}
                   alt="avatar"
-                  style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '3px solid #4a90d9' }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '3px solid #4a90d9',
+                  }}
                 />
               ) : (
-                <div style={{
-                  width: 100, height: 100, borderRadius: '50%',
-                  backgroundColor: '#4a90d9', color: '#fff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 36, fontWeight: 'bold',
-                }}>
-                  {user?.firstname?.[0]}{user?.lastname?.[0]}
+                <div
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: '50%',
+                    backgroundColor: '#4a90d9',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 36,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {user?.firstname?.[0]}
+                  {user?.lastname?.[0]}
                 </div>
               )}
             </div>
             <div>
-              <h3 className="mb-1">{user?.firstname} {user?.lastname}</h3>
+              <h3 className="mb-1">
+                {user?.firstname} {user?.lastname}
+              </h3>
               <p className="text-muted mb-0">{user?.mail}</p>
-              <span className={`badge inline mt-2 ${user?.admin ? 'bg-blue fg-white' : 'bg-gray fg-white'}`} style={{fontSize: "0.9rem"}}>
+              <span
+                className={`badge inline mt-2 ${user?.admin ? 'bg-blue fg-white' : 'bg-gray fg-white'}`}
+                style={{ fontSize: '0.9rem' }}
+              >
                 {user?.admin ? 'Administrateur' : 'Utilisateur'}
               </span>
             </div>
@@ -114,7 +136,8 @@ export default function ProfilePage() {
             Avatar
           </h4>
           <p className="text-muted mb-4">
-            Choisissez une image (max 1 Mo, format carré recommandé). L'avatar sera affiché dans le chat et la barre de navigation.
+            Choisissez une image (max 1 Mo, format carré recommandé). L'avatar sera affiché dans le
+            chat et la barre de navigation.
           </p>
 
           <input
@@ -131,15 +154,15 @@ export default function ProfilePage() {
               onClick={() => fileInputRef.current?.click()}
               disabled={loading}
             >
-              {loading ? <span className="mif-spinner2 ani-spin mr-2" /> : <span className="mif-upload mr-2" />}
+              {loading ? (
+                <span className="mif-spinner2 ani-spin mr-2" />
+              ) : (
+                <span className="mif-upload mr-2" />
+              )}
               Changer l'avatar
             </button>
             {user?.avatar && (
-              <button
-                className="button alert"
-                onClick={handleDeleteAvatar}
-                disabled={loading}
-              >
+              <button className="button alert" onClick={handleDeleteAvatar} disabled={loading}>
                 <span className="mif-bin mr-2" />
                 Supprimer
               </button>

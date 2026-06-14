@@ -11,7 +11,7 @@ export const AuthContext = createContext(null);
 
 // Le composant AuthProvider enveloppe l'application et fournit le contexte d'authentification à tous les composants enfants
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Au montage, on vérifie si un token est présent et valide pour récupérer les infos de l'utilisateur
@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
       return;
     }
     getMe()
-      .then((data) => setUser(data))
+      .then(data => setUser(data))
       .catch(() => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');

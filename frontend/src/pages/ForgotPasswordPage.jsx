@@ -8,7 +8,7 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -30,7 +30,9 @@ export default function ForgotPasswordPage() {
           <div className="border border-size-1 border-radius-10 bd-blue p-8">
             <div className="text-center mb-6">
               <h2 className="text-bold mt-2">Mot de passe oublié</h2>
-              <p className="text-muted">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
+              <p className="text-muted">
+                Entrez votre adresse email pour recevoir un lien de réinitialisation.
+              </p>
             </div>
 
             {error && (
@@ -56,7 +58,7 @@ export default function ForgotPasswordPage() {
                   data-prepend="&lt;span class='mif-person'&gt;"
                   placeholder="john.doe@mail.fr"
                   value={mail}
-                  onChange={(e) => setMail(e.target.value)}
+                  onChange={e => setMail(e.target.value)}
                   required
                 />
               </div>

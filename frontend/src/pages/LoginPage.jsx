@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -31,7 +31,6 @@ export default function LoginPage() {
       <div className="row">
         <div className="cell-md-6 offset-md-3">
           <div className="border border-size-1 border-radius-10 bd-blue p-8">
-
             <div className="text-center mb-6">
               <h2 className="text-bold mt-2">SR03 Chat</h2>
               <p className="text-muted">Connectez-vous pour accéder à votre espace</p>
@@ -54,7 +53,7 @@ export default function LoginPage() {
                   data-prepend="&lt;span class='mif-person'&gt;"
                   placeholder="john.doe@mail.fr"
                   value={mail}
-                  onChange={(e) => setMail(e.target.value)}
+                  onChange={e => setMail(e.target.value)}
                   required
                 />
               </div>
@@ -65,10 +64,11 @@ export default function LoginPage() {
                   id="login-password"
                   type="password"
                   data-role="input"
-                  data-prepend="<span class='mif-lock'></span>" data-reveal-button-icon="<span class='mif-eye mif-2x'></span>"
+                  data-prepend="<span class='mif-lock'></span>"
+                  data-reveal-button-icon="<span class='mif-eye mif-2x'></span>"
                   placeholder="*********"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                 />
               </div>
@@ -80,9 +80,11 @@ export default function LoginPage() {
                   className="button info bg-blue fg-white text-bold w-100"
                   disabled={loading}
                 >
-                  {loading
-                    ? <span className="mif-spinner2 ani-spin mr-2" />
-                    : <span className="mif-enter mr-2" />}
+                  {loading ? (
+                    <span className="mif-spinner2 ani-spin mr-2" />
+                  ) : (
+                    <span className="mif-enter mr-2" />
+                  )}
                   Se connecter
                 </button>
               </div>

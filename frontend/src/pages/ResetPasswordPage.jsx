@@ -12,7 +12,7 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -63,27 +63,33 @@ export default function ResetPasswordPage() {
             {!success && (
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label className="label-for-input">Nouveau mot de passe <span className="fg-red">*</span></label>
+                  <label className="label-for-input">
+                    Nouveau mot de passe <span className="fg-red">*</span>
+                  </label>
                   <input
                     type="password"
                     data-role="input"
                     placeholder="*********"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                     required
                     minLength={8}
                   />
-                  <small className="text-muted">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</small>
+                  <small className="text-muted">
+                    Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+                  </small>
                 </div>
 
                 <div className="form-group mt-4">
-                  <label className="label-for-input">Confirmer le mot de passe <span className="fg-red">*</span></label>
+                  <label className="label-for-input">
+                    Confirmer le mot de passe <span className="fg-red">*</span>
+                  </label>
                   <input
                     type="password"
                     data-role="input"
                     placeholder="*********"
                     value={password2}
-                    onChange={(e) => setPassword2(e.target.value)}
+                    onChange={e => setPassword2(e.target.value)}
                     required
                     minLength={8}
                   />

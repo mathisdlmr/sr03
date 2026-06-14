@@ -39,10 +39,23 @@ export default function AppRouter() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Route du chat (ouverte dans une nouvelle fenêtre sans navbar) */}
-        <Route path="/chat/:chatId" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+        <Route
+          path="/chat/:chatId"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Routes protégées avec layout (navbar + contenu) */}
-        <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/planifier" element={<PlanifierPage />} />

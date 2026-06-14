@@ -11,25 +11,29 @@ export default function Navbar() {
   };
 
   return (
-    <header className="border border-size-1 bd-gray shadow-normal" data-role="appbar" data-expand-point="md">
+    <header
+      className="border border-size-1 bd-gray shadow-normal"
+      data-role="appbar"
+      data-expand-point="md"
+    >
       <ul className="app-bar-menu" style={{ fontSize: '14px' }}>
         <li>
-          <NavLink to="/home" className={({ isActive }) => isActive ? 'text-bold' : ''}>
+          <NavLink to="/home" className={({ isActive }) => (isActive ? 'text-bold' : '')}>
             <span className="mif-home mr-1" /> Accueil
           </NavLink>
         </li>
         <li>
-          <NavLink to="/planifier" className={({ isActive }) => isActive ? 'text-bold' : ''}>
+          <NavLink to="/planifier" className={({ isActive }) => (isActive ? 'text-bold' : '')}>
             <span className="mif-plus mr-1" /> Planifier une discussion
           </NavLink>
         </li>
         <li>
-          <NavLink to="/salons" className={({ isActive }) => isActive ? 'text-bold' : ''}>
+          <NavLink to="/salons" className={({ isActive }) => (isActive ? 'text-bold' : '')}>
             <span className="mif-chat mr-1" /> Mes salons
           </NavLink>
         </li>
         <li>
-          <NavLink to="/invitations" className={({ isActive }) => isActive ? 'text-bold' : ''}>
+          <NavLink to="/invitations" className={({ isActive }) => (isActive ? 'text-bold' : '')}>
             <span className="mif-mail mr-1" /> Mes invitations
           </NavLink>
         </li>
@@ -37,13 +41,19 @@ export default function Navbar() {
 
       <div className="app-bar-item-static mx-auto d-flex flex-align-center">
         {user && (
-          <span className="h3 mt-3">{user.firstname} {user.lastname}</span>
+          <span className="h3 mt-3">
+            {user.firstname} {user.lastname}
+          </span>
         )}
       </div>
 
       <div className="app-bar-item-static ml-auto">
         {user && (
-          <NavLink to="/profil" className="navbar-account-link d-flex flex-align-center" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <NavLink
+            to="/profil"
+            className="navbar-account-link d-flex flex-align-center"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
             {user.avatar ? (
               <img
                 src={user.avatar}

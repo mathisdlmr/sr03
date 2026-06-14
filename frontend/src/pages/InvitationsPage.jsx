@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { deleteInvite, getInvitedChats} from '../api/apiCalls';
+import { deleteInvite, getInvitedChats } from '../api/apiCalls';
 import { formatDateTime } from '../utils/dateUtils';
 
 export default function InvitationsPage() {
@@ -9,22 +9,22 @@ export default function InvitationsPage() {
 
   useEffect(() => {
     getInvitedChats()
-      .then((data) => setChats(data))
+      .then(data => setChats(data))
       .catch(() => setError('Impossible de charger vos invitations...'))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleDelete = async (idChat) => {
+  const handleDelete = async idChat => {
     if (!confirm(`Supprimer l'invitation (vous n'aurez plus accès au salon) ?`)) return;
     try {
       await deleteInvite(idChat);
-      setChats((prev) => prev.filter((c) => c.id !== idChat));
+      setChats(prev => prev.filter(c => c.id !== idChat));
     } catch {
       alert('Erreur lors de la suppression...');
     }
   };
 
-  const openChat = (chatId) => {
+  const openChat = chatId => {
     window.open(`/chat/${chatId}`);
   };
 
@@ -35,7 +35,8 @@ export default function InvitationsPage() {
 
       {error && (
         <div className="alert alert-warning border-radius-2 mb-4">
-          <span className="mif-warning mx-2" />{error}
+          <span className="mif-warning mx-2" />
+          {error}
         </div>
       )}
 
@@ -50,43 +51,43 @@ export default function InvitationsPage() {
         </div>
       ) : (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-        <table className="table border striped">
-          <thead>
-            <tr>
-              <th>Titre</th>
-              <th>Description</th>
-              <th>Créé le</th>
-              <th>Se termine le</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {chats.map((chat) => (
-              <tr key={chat.id}>
-                <td className="text-bold">{chat.title}</td>
-                <td className="text-muted">{chat.description || '--'}</td>
-                <td>{formatDateTime(chat.createdAt)}</td>
-                <td>{formatDateTime(chat.endsAt)}</td>
-                <td className="text-right">
-                  <button
-                    className="button small info mr-2"
-                    onClick={() => openChat(chat.id)}
-                    title="Rejoindre le chat"
-                  >
-                    <span className="mif-chat mr-1" /> Rejoindre
-                  </button>
-                  <button
+          <table className="table border striped">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Créé le</th>
+                <th>Se termine le</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chats.map(chat => (
+                <tr key={chat.id}>
+                  <td className="text-bold">{chat.title}</td>
+                  <td className="text-muted">{chat.description || '--'}</td>
+                  <td>{formatDateTime(chat.createdAt)}</td>
+                  <td>{formatDateTime(chat.endsAt)}</td>
+                  <td className="text-right">
+                    <button
+                      className="button small info mr-2"
+                      onClick={() => openChat(chat.id)}
+                      title="Rejoindre le chat"
+                    >
+                      <span className="mif-chat mr-1" /> Rejoindre
+                    </button>
+                    <button
                       className="button small alert"
                       onClick={() => handleDelete(chat.id)}
                       title="Supprimer l'invitation"
-                  >
-                    <span className="mif-bin" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    >
+                      <span className="mif-bin" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

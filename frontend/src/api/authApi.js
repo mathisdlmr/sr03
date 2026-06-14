@@ -13,20 +13,14 @@ const API_URL = '/api';
 // POST /api/auth/login - Authentification de l'utilisateur
 // Body : mail: string, password: string
 export const login = async (mail, password) => {
-  const res = await axios.post(
-    `${API_URL}/auth/login`,
-    new URLSearchParams({ mail, password })
-  );
+  const res = await axios.post(`${API_URL}/auth/login`, new URLSearchParams({ mail, password }));
   return res.data;
 };
 
 // POST /api/auth/forgot-password - Demander un email de réinitialisation de mot de passe
 // Body : mail: string
-export const forgotPassword = async (mail) => {
-  const res = await axios.post(
-    `${API_URL}/auth/forgot-password`,
-    new URLSearchParams({ mail })
-  );
+export const forgotPassword = async mail => {
+  const res = await axios.post(`${API_URL}/auth/forgot-password`, new URLSearchParams({ mail }));
   return res.data;
 };
 

@@ -13,7 +13,7 @@ export default function PlanifierPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     if (!title.trim()) {
       setError('Le titre est obligatoire...');
@@ -63,14 +63,16 @@ export default function PlanifierPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="label-for-input">Titre du salon <span className="fg-red">*</span></label>
+              <label className="label-for-input">
+                Titre du salon <span className="fg-red">*</span>
+              </label>
               <input
                 id="chat-title"
                 type="text"
                 data-role="input"
                 placeholder="ex : Réunion projet SR03"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 required
               />
             </div>
@@ -82,7 +84,7 @@ export default function PlanifierPage() {
                 data-role="textarea"
                 placeholder="Décrivez l'objet de cette discussion..."
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 rows={3}
                 style={{ width: '100%', resize: 'vertical' }}
               />
@@ -97,9 +99,11 @@ export default function PlanifierPage() {
                     type="datetime-local"
                     className="w-100"
                     value={startsAt}
-                    onChange={(e) => setStartsAt(e.target.value)}
+                    onChange={e => setStartsAt(e.target.value)}
                   />
-                  <small className="text-muted">Laissez vide pour une date de fin par défaut (+10 jours)</small>
+                  <small className="text-muted">
+                    Laissez vide pour une date de fin par défaut (+10 jours)
+                  </small>
                 </div>
               </div>
               <div className="cell-md-6">
@@ -112,9 +116,11 @@ export default function PlanifierPage() {
                     className="w-100"
                     min={1}
                     value={durationMinutes}
-                    onChange={(e) => setDurationMinutes(parseInt(e.target.value) || 60)}
+                    onChange={e => setDurationMinutes(parseInt(e.target.value) || 60)}
                   />
-                  <small className="text-muted">Durée en minutes (ex. 60 = 1h, 1440 = 1 jour)</small>
+                  <small className="text-muted">
+                    Durée en minutes (ex. 60 = 1h, 1440 = 1 jour)
+                  </small>
                 </div>
               </div>
             </div>

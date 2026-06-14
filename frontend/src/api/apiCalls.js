@@ -20,35 +20,37 @@ export const getInvitedChats = () => apiGet('chats/invited');
 
 // POST /api/chats - Créer un salon
 // Body (JSON) : title: string, description: string, startsAt: string, durationMinutes: number
-export const createChat = (data) => apiPost('chats', data, { contentType: 'application/json' });
+export const createChat = data => apiPost('chats', data, { contentType: 'application/json' });
 
 // GET /api/chats/:id - Informations du salon
-export const getChat = (id) => apiGet(`chats/${id}`)
+export const getChat = id => apiGet(`chats/${id}`);
 
 // DELETE /api/chats/:id - Supprimer un salon
-export const deleteChat = (id) => apiDelete(`chats/${id}`);
+export const deleteChat = id => apiDelete(`chats/${id}`);
 
 // GET /api/invitations/{chatId} - Récupère la liste des invitations invited au chat
-export const getInvitationsToChat = (idChat) => apiGet(`invitations/${idChat}`);
+export const getInvitationsToChat = idChat => apiGet(`invitations/${idChat}`);
 
 // GET /api/invitations/{chatId} - Récupère la liste des utilisateurices invited au chat
-export const getInvitedUsersToChat = (idChat) => apiGet(`invitations/users/${idChat}`);
+export const getInvitedUsersToChat = idChat => apiGet(`invitations/users/${idChat}`);
 
 // POST /api/invitations - Inviter un utilisateur dans un salon
 // Body (JSON) : idUser: number, idChat: number
-export const inviteUser = (idUser, idChat) => apiPost('invitations', new URLSearchParams({ idUser, idChat }));
+export const inviteUser = (idUser, idChat) =>
+  apiPost('invitations', new URLSearchParams({ idUser, idChat }));
 
 // DELETE /api/invitations/{chatId} - Supprime l'invitation à un chat de l'utilisateur connecté
-export const deleteInvite = (idChat) => apiDelete(`invitations/${idChat}`);
+export const deleteInvite = idChat => apiDelete(`invitations/${idChat}`);
 
 // DELETE /api/invitations/{userId}/{chatId} - Supprime l'invitation d'un utilisateur à un chat
 export const deleteInviteUser = (idUser, idChat) => apiDelete(`invitations/${idUser}/${idChat}`);
 
 // GET /api/users/{chatId}/search?q=... - Recherche d'utilisateurs (pour l'autocomplétion)
-export const searchUninvitedUsers = (idChat, q) => apiGet(`users/${idChat}/search?q=${encodeURIComponent(q)}`);
+export const searchUninvitedUsers = (idChat, q) =>
+  apiGet(`users/${idChat}/search?q=${encodeURIComponent(q)}`);
 
 // POST /api/auth/avatar - Upload d'avatar
-export const uploadAvatar = async (file) => {
+export const uploadAvatar = async file => {
   const formData = new FormData();
   formData.append('file', file);
   const accessToken = localStorage.getItem('access_token');
