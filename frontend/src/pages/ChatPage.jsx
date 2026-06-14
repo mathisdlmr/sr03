@@ -15,7 +15,9 @@ export default function ChatPage() {
   const [connectedUsers, setConnectedUsers] = useState([]);
   const [message, setMessage] = useState('');
   const [connected, setConnected] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() =>
+    localStorage.getItem('access_token') && chatId ? '' : 'Chat non trouvé.'
+  );
   const [openMenuId, setOpenMenuId] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,7 +48,6 @@ export default function ChatPage() {
     if (!isRecording) {
       return;
     }
-    setRecordingSeconds(0);
     let seconds = 0;
     const interval = setInterval(() => {
       seconds += 1;
@@ -69,7 +70,6 @@ export default function ChatPage() {
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
     if (!accessToken || !chatId) {
-      setError('Chat non trouvé.');
       return;
     }
 
@@ -257,6 +257,7 @@ export default function ChatPage() {
 
       recorder.start();
       mediaRecorderRef.current = recorder;
+      setRecordingSeconds(0);
       setIsRecording(true);
     } catch {
       alert("Impossible d'accéder au microphone...");
@@ -353,7 +354,7 @@ export default function ChatPage() {
               {messages.length === 0 && connected && (
                 <div className="text-center text-muted p-10">
                   <span className="mif-bubbles mif-4x d-block mb-4" />
-                  <p>Aucun message pour l'instant. Écrivez le premier !</p>
+                  <p>Aucun message pour l&apos;instant. Écrivez le premier !</p>
                 </div>
               )}
 

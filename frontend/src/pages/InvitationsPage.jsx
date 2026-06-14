@@ -47,7 +47,7 @@ export default function InvitationsPage() {
       ) : chats.length === 0 ? (
         <div className="border border-size-1 border-radius-6 p-8 text-center text-muted">
           <span className="mif-envelope mif-4x d-block mb-4" />
-          Vous n'avez pas encore reçu d'invitation.
+          Vous n&apos;avez pas encore reçu d&apos;invitation.
         </div>
       ) : (
         <div style={{ overflowX: 'auto', width: '100%' }}>

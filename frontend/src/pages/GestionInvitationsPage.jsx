@@ -11,32 +11,29 @@ import {
 export default function SalonsPage() {
   const { chatId } = useParams();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(chatId));
   const [chat, setChat] = useState([]);
   const [listUsers, setUsers] = useState([]);
   const [listInvitedUsers, setInvitedUsers] = useState([]);
   const [search, setSearch] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => (chatId ? '' : 'Chat non trouvé.'));
 
-  const loadInvitedUsers = chatId => {
+  const loadInvitedUsers = chatId =>
     getInvitedUsersToChat(chatId)
       .then(data => setInvitedUsers(data))
       .catch(() => setError('Impossible de charger les utilisateurices...'));
-  };
 
   useEffect(() => {
     if (!chatId) {
-      setError('Chat non trouvé.');
       return;
     }
 
     // On récupère le chat
-    getChat(chatId)
+    const chatPromise = getChat(chatId)
       .then(data => setChat(data))
       .catch(() => setError('Impossible de charger le chat...'));
 
-    loadInvitedUsers(chatId);
-    setLoading(false);
+    Promise.all([chatPromise, loadInvitedUsers(chatId)]).finally(() => setLoading(false));
   }, [chatId]);
 
   const handleSubmit = async e => {
@@ -79,7 +76,7 @@ export default function SalonsPage() {
   return (
     <div>
       <main className="container mt-8">
-        <h2>Gérer les invitations du salon "{chat.title}" </h2>
+        <h2>Gérer les invitations du salon &quot;{chat.title}&quot; </h2>
         <form onSubmit={handleSubmit} className="row my-4">
           <div className="cell-md-8">
             <input

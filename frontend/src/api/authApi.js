@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { apiGet } from './apiClient';
 
 const API_URL = '/api';
 

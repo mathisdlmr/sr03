@@ -136,7 +136,7 @@ export default function ProfilePage() {
             Avatar
           </h4>
           <p className="text-muted mb-4">
-            Choisissez une image (max 1 Mo, format carré recommandé). L'avatar sera affiché dans le
+            Choisissez une image (max 1 Mo, format carré recommandé). L&apos;avatar sera affiché dans le
             chat et la barre de navigation.
           </p>
 
@@ -159,7 +159,7 @@ export default function ProfilePage() {
               ) : (
                 <span className="mif-upload mr-2" />
               )}
-              Changer l'avatar
+              Changer l&apos;avatar
             </button>
             {user?.avatar && (
               <button className="button alert" onClick={handleDeleteAvatar} disabled={loading}>

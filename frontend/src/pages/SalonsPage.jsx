@@ -10,7 +10,6 @@ export default function SalonsPage() {
   const navigate = useNavigate();
 
   const loadChats = () => {
-    setLoading(true);
     getMyChats()
       .then(data => setChats(data))
       .catch(() => setError('Impossible de charger vos salons...'))
@@ -62,7 +61,7 @@ export default function SalonsPage() {
       ) : chats?.length === 0 ? (
         <div className="border border-size-1 border-radius-6 p-8 text-center text-muted">
           <span className="mif-chat mif-4x d-block mb-4" />
-          Vous n'avez pas encore créé de salon.&nbsp;
+          Vous n&apos;avez pas encore créé de salon.&nbsp;
           <Link to="/planifier">Créer votre premier salon</Link>
         </div>
       ) : (

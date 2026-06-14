@@ -1,24 +1,22 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { login as apiLogin } from '../api/authApi';
 import { getMe } from '../api/apiCalls';
+import { AuthContext } from './authContext';
 
 /**
  * Le fichier AuthContext est responsable de la gestion de l'état d'authentification de l'utilisateur
  * Il fournit des fonctions pour se connecter, se déconnecter et rafraîchir les informations de l'utilisateur
  */
 
-export const AuthContext = createContext(null);
-
 // Le composant AuthProvider enveloppe l'application et fournit le contexte d'authentification à tous les composants enfants
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(localStorage.getItem('access_token')));
 
   // Au montage, on vérifie si un token est présent et valide pour récupérer les infos de l'utilisateur
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (!token) {
-      setLoading(false);
       return;
     }
     getMe()
