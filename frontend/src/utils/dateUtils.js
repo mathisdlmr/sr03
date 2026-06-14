@@ -1,15 +1,4 @@
-// Formate un timestamp en date lisible
-export function formatDate(value) {
-	if (!value) {
-		return '--';
-	}
-	return new Date(value).toLocaleDateString('fr-FR', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-	});
-}
-
+// Formate un timestamp en heure lisible
 export function formatTime (value) {
 	if (!value) {
 		return '--';
@@ -34,19 +23,13 @@ export function formatDateTime(value) {
 	});
 }
 
-// Retourne "il y a X min/h/j" par rapport à maintenant
-export function timeAgo(value) {
-	if (!value) {
-		return '--';
+// Formate une durée en secondes au format m:ss (pour les messages vocaux)
+export function formatDuration(seconds) {
+	if (!seconds || !Number.isFinite(seconds)) {
+		return '0:00';
 	}
-	const diff = (Date.now() - new Date(value).getTime()) / 1000;
-	if (diff < 60) {
-		return 'à l\'instant';
-	} else if (diff < 3600) {
-		return `il y a ${Math.floor(diff / 60)} min`;
-	} else if (diff < 86400) {
-		return `il y a ${Math.floor(diff / 3600)} h`;
-	} else {
-		return `il y a ${Math.floor(diff / 86400)} j`;
-	}
+	const totalSeconds = Math.floor(seconds);
+	const minutes = Math.floor(totalSeconds / 60);
+	const secs = totalSeconds % 60;
+	return `${minutes}:${secs.toString().padStart(2, '0')}`;
 }
