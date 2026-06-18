@@ -95,13 +95,26 @@ export default function SalonsPage() {
                       >
                         <span className="mif-person"/> Invitations
                       </button>
-                      <button
-                          className="button small info"
-                          onClick={() => openChat(chat.id)}
+
+                      {new Date() >= new Date(chat.startsAt) && new Date() <= new Date(chat.endsAt) ? (
+                        <button
+                            className="button small info"
+                            onClick={() => openChat(chat.id)}
                           title="Rejoindre le chat"
-                      >
-                        <span className="mif-chat"/> Rejoindre
-                      </button>
+                        >
+                          <span className="mif-chat"/> Rejoindre
+                        </button>
+                      ) : (
+                        <button
+                            className="button small info"
+                            onClick={() => openChat(chat.id)}
+                            title="Chat inactif"
+                            disabled={true}
+                        >
+                          <span className="mif-chat"/> Inactif
+                        </button>
+                      )}
+
                       <button
                           className="button small alert"
                           onClick={() => handleDelete(chat.id)}
