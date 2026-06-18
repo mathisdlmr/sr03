@@ -338,7 +338,7 @@ export default function ChatPage() {
                   title="Utilisateurs connectés"
                   onClick={() => setSidebarOpen(true)}
                 >
-                  <span className="mif-users" />
+                  <span className="mif-people-outline" />
                 </button>
               </div>
             </div>
@@ -577,7 +577,7 @@ export default function ChatPage() {
               style={{ borderBottom: '1px solid #ddd' }}
             >
               <h4 className="m-0">
-                <span className="mif-users mr-2" />
+                <span className="mif-people-outline mr-2" />
                 Connectés ({connectedUsers.length})
               </h4>
               <button

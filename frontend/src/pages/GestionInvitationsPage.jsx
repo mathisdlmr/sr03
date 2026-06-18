@@ -146,7 +146,7 @@ export default function SalonsPage() {
                           onClick={() => toggleInvite(user.id)}
                           title="Inviter au chat"
                         >
-                          <span className="mif-plus mr-1" /> Inviter
+                          <span className="mif-add-person mr-1" /> Inviter
                         </button>
                       </td>
                     </tr>
@@ -186,7 +186,7 @@ export default function SalonsPage() {
                             onClick={() => handleDeleteInvite(user.id, chat.id)}
                             title="Retirer du chat"
                           >
-                            <span className="mif-cross mr-1" /> Retirer
+                            <span className="mif-remove-person mr-1" /> Retirer
                           </button>
                         </td>
                       </tr>
