@@ -6,7 +6,7 @@ import '@olton/metroui/lib/icons.css';
 import '@olton/metroui/lib/metro.js';
 
 import './index.css';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext.jsx';
 import App from './App';
 
 createRoot(document.getElementById('root')).render(
