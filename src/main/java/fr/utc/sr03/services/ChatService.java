@@ -5,6 +5,7 @@ import fr.utc.sr03.repository.ChatRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -46,7 +47,11 @@ public class ChatService {
     }
 
     public boolean isActive(int chat_id) {
-        return chatRepository.countActive(chat_id) > 0;
+        Chat chat = chatRepository.findById(chat_id).orElse(null);
+        if (chat==null){
+            return false;
+        }
+        return !Instant.now().isBefore(chat.getStartsAt().toInstant()) && !Instant.now().isAfter(chat.getEndsAt().toInstant());
     }
 
 }

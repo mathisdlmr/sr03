@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -272,7 +274,7 @@ public class ApiController {
         chat.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         if (chatDTO.getStartsAt() != null && !chatDTO.getStartsAt().isBlank()) { // Si on a une date de début -> chat de 1h par défaut (pour prévoir une réunion par exemple). Sinon, le chat est disponible immédiatement et pendant 10 jours par défaut
             try {
-                LocalDateTime startsAt = LocalDateTime.parse(chatDTO.getStartsAt());
+                LocalDateTime startsAt = LocalDateTime.ofInstant(Instant.parse(chatDTO.getStartsAt()), ZoneId.systemDefault());
                 int duration = chatDTO.getDurationMinutes() > 0 ? chatDTO.getDurationMinutes() : 60;
                 chat.setEndsAt(Timestamp.valueOf(startsAt.plusMinutes(duration)));
                 chat.setStartsAt(Timestamp.valueOf(startsAt));

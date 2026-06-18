@@ -20,7 +20,4 @@ public interface ChatRepository extends JpaRepository<Chat, Integer> {
     @Query("select count(c) from Chat c where c.id = ?1 and c.creator.id = ?2")
     long countOwner(int chat_id, int user_id);
 
-    // Soit on récupère un résultat (>0 = true) soit aucun (0 = false)
-    @Query("select count(c) from Chat c where c.id = ?1 and c.startsAt <= CURRENT_TIMESTAMP and c.endsAt >= CURRENT_TIMESTAMP")
-    long countActive(int chat_id);
 }

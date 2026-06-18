@@ -25,7 +25,7 @@ export default function PlanifierPage() {
       await createChat({
         title: title.trim(),
         description: description.trim(),
-        startsAt: startsAt || null,
+        startsAt: new Date(startsAt).toISOString() || null,
         durationMinutes: durationMinutes || 60,
       });
       setSuccess('Salon créé avec succès !');
