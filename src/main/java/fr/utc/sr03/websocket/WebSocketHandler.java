@@ -118,6 +118,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     session.close();
                     return;
                 }
+                // Vérification sur la validité du chat
+                boolean isActive = chatService.isActive(chatIdInt);
+                if (!isActive) {
+                    session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Ce salon n'est pas actif."))));
+                    session.close();
+                    return;
+                }
             } catch (NumberFormatException e) {
                 session.close(CloseStatus.BAD_DATA);
                 return;
@@ -160,6 +167,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 boolean isInvited = invitationService.isInvited(chatIdInt, user.getId());
                 if (!isOwner && !isInvited) {
                     session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Vous n'êtes pas autorisé à accéder à ce salon."))));
+                    session.close();
+                    return;
+                }
+                // Vérification sur la validité du chat
+                boolean isActive = chatService.isActive(chatIdInt);
+                if (!isActive) {
+                    session.sendMessage(new TextMessage(mapper.writeValueAsString(MessageSocket.system("Ce salon n'est pas actif."))));
                     session.close();
                     return;
                 }

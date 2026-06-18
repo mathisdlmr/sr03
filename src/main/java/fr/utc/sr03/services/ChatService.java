@@ -44,4 +44,9 @@ public class ChatService {
     public boolean isOwner(int chat_id, int user_id) {
         return chatRepository.countOwner(chat_id, user_id) > 0;
     }
+
+    public boolean isActive(int chat_id) {
+        return chatRepository.countActive(chat_id) > 0;
+    }
+
 }
