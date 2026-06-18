@@ -71,30 +71,31 @@ export default function InvitationsPage() {
                   <td>{formatDateTime(chat.startsAt)}</td>
                   <td>{formatDateTime(chat.endsAt)}</td>
                   <td className="text-right">
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
-                      {new Date() >= new Date(chat.startsAt) && new Date() <= new Date(chat.endsAt) ? (
-                          <button
-                              className="button small info"
-                              onClick={() => openChat(chat.id)}
-                              title="Rejoindre le chat"
-                          >
-                            <span className="mif-chat"/> Rejoindre
-                          </button>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
+                      {new Date() >= new Date(chat.startsAt) &&
+                      new Date() <= new Date(chat.endsAt) ? (
+                        <button
+                          className="button small info"
+                          onClick={() => openChat(chat.id)}
+                          title="Rejoindre le chat"
+                        >
+                          <span className="mif-chat" /> Rejoindre
+                        </button>
                       ) : (
-                          <button
-                              className="button small info"
-                              onClick={() => openChat(chat.id)}
-                              title="Chat inactif"
-                              disabled={true}
-                          >
-                            <span className="mif-chat"/> Inactif
-                          </button>
+                        <button
+                          className="button small info"
+                          onClick={() => openChat(chat.id)}
+                          title="Chat inactif"
+                          disabled={true}
+                        >
+                          <span className="mif-chat" /> Inactif
+                        </button>
                       )}
 
                       <button
-                          className="button small alert"
-                          onClick={() => handleDelete(chat.id)}
-                          title="Supprimer l'invitation"
+                        className="button small alert"
+                        onClick={() => handleDelete(chat.id)}
+                        title="Supprimer l'invitation"
                       >
                         <span className="mif-bin" />
                       </button>

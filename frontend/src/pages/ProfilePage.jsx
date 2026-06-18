@@ -136,8 +136,8 @@ export default function ProfilePage() {
             Avatar
           </h4>
           <p className="text-muted mb-4">
-            Choisissez une image (max 1 Mo, format carré recommandé). L&apos;avatar sera affiché dans le
-            chat et la barre de navigation.
+            Choisissez une image (max 1 Mo, format carré recommandé). L&apos;avatar sera affiché
+            dans le chat et la barre de navigation.
           </p>
 
           <input

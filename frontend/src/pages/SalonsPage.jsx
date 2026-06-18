@@ -86,41 +86,42 @@ export default function SalonsPage() {
                   <td>{formatDateTime(chat.startsAt)}</td>
                   <td>{formatDateTime(chat.endsAt)}</td>
                   <td className="text-right">
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
                       <button
-                          className="button small info"
-                          onClick={() => navigate(`/salons/invites/${chat.id}`)}
-                          title="Inviter des utilisateurices"
-                          style={{gridColumn: 'span 2'}}
+                        className="button small info"
+                        onClick={() => navigate(`/salons/invites/${chat.id}`)}
+                        title="Inviter des utilisateurices"
+                        style={{ gridColumn: 'span 2' }}
                       >
-                        <span className="mif-person"/> Invitations
+                        <span className="mif-person" /> Invitations
                       </button>
 
-                      {new Date() >= new Date(chat.startsAt) && new Date() <= new Date(chat.endsAt) ? (
+                      {new Date() >= new Date(chat.startsAt) &&
+                      new Date() <= new Date(chat.endsAt) ? (
                         <button
-                            className="button small info"
-                            onClick={() => openChat(chat.id)}
+                          className="button small info"
+                          onClick={() => openChat(chat.id)}
                           title="Rejoindre le chat"
                         >
-                          <span className="mif-chat"/> Rejoindre
+                          <span className="mif-chat" /> Rejoindre
                         </button>
                       ) : (
                         <button
-                            className="button small info"
-                            onClick={() => openChat(chat.id)}
-                            title="Chat inactif"
-                            disabled={true}
+                          className="button small info"
+                          onClick={() => openChat(chat.id)}
+                          title="Chat inactif"
+                          disabled={true}
                         >
-                          <span className="mif-chat"/> Inactif
+                          <span className="mif-chat" /> Inactif
                         </button>
                       )}
 
                       <button
-                          className="button small alert"
-                          onClick={() => handleDelete(chat.id)}
-                          title="Supprimer"
+                        className="button small alert"
+                        onClick={() => handleDelete(chat.id)}
+                        title="Supprimer"
                       >
-                        <span className="mif-bin"/>
+                        <span className="mif-bin" />
                       </button>
                     </div>
                   </td>
