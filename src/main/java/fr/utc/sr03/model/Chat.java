@@ -24,6 +24,9 @@ public class Chat {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    @Column(name = "starts_at")
+    private Timestamp startsAt;
+
     @Column(name = "ends_at")
     private Timestamp endsAt;
 
@@ -76,6 +79,10 @@ public class Chat {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Timestamp getStartsAt() { return startsAt; }
+
+    public void setStartsAt(Timestamp startsAt) { this.startsAt = startsAt; }
 
     public Timestamp getEndsAt() {
         return endsAt;

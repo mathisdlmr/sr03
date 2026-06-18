@@ -275,11 +275,13 @@ public class ApiController {
                 LocalDateTime startsAt = LocalDateTime.parse(chatDTO.getStartsAt());
                 int duration = chatDTO.getDurationMinutes() > 0 ? chatDTO.getDurationMinutes() : 60;
                 chat.setEndsAt(Timestamp.valueOf(startsAt.plusMinutes(duration)));
+                chat.setStartsAt(Timestamp.valueOf(startsAt));
             } catch (Exception e) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Format de date invalide."));
             }
         } else {
             chat.setEndsAt(Timestamp.valueOf(LocalDateTime.now().plusDays(10)));
+            chat.setStartsAt(Timestamp.valueOf(LocalDateTime.now()));
         }
 
         chatService.saveChat(chat);

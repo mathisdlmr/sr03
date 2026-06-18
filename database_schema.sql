@@ -14,6 +14,7 @@ CREATE TABLE chat (
     title TEXT NOT NULL,
     description TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    starts_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     ends_at DATETIME, /* SQLite ne semble pas supporter les opérations du type DEFAULT date('now','+1 hour')... */
     creator_id INTEGER NOT NULL,
 
