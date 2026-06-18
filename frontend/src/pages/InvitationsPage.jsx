@@ -57,6 +57,7 @@ export default function InvitationsPage() {
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Créé le</th>
+                <th>Commence le</th>
                 <th>Se termine le</th>
                 <th className="text-right">Actions</th>
               </tr>
@@ -67,6 +68,7 @@ export default function InvitationsPage() {
                   <td className="text-bold">{chat.title}</td>
                   <td className="text-muted">{chat.description || '--'}</td>
                   <td>{formatDateTime(chat.createdAt)}</td>
+                  <td>{formatDateTime(chat.startsAt)}</td>
                   <td>{formatDateTime(chat.endsAt)}</td>
                   <td className="text-right">
                     <button

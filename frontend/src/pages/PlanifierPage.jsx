@@ -93,7 +93,7 @@ export default function PlanifierPage() {
             <div className="row mt-4">
               <div className="cell-md-6">
                 <div className="form-group">
-                  <label className="label-for-input">Date et horaire</label>
+                  <label className="label-for-input">Date et horaire de début</label>
                   <input
                     id="chat-starts-at"
                     type="datetime-local"
@@ -102,7 +102,7 @@ export default function PlanifierPage() {
                     onChange={e => setStartsAt(e.target.value)}
                   />
                   <small className="text-muted">
-                    Laissez vide pour une date de fin par défaut (+10 jours)
+                    Laissez vide pour une durée par défaut (10 jours)
                   </small>
                 </div>
               </div>

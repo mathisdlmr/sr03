@@ -72,6 +72,7 @@ export default function SalonsPage() {
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Créé le</th>
+                <th>Commence le</th>
                 <th>Se termine le</th>
                 <th className="text-right">Actions</th>
               </tr>
@@ -82,24 +83,25 @@ export default function SalonsPage() {
                   <td className="text-bold">{chat.title}</td>
                   <td className="text-italic">{chat.description || '--'}</td>
                   <td>{formatDateTime(chat.createdAt)}</td>
+                  <td>{formatDateTime(chat.startsAt)}</td>
                   <td>{formatDateTime(chat.endsAt)}</td>
                   <td className="text-right">
                     <button
-                      className="button small info mr-2"
+                      className="button small info mx-1"
                       onClick={() => navigate(`/salons/invites/${chat.id}`)}
                       title="Inviter des utilisateurices"
                     >
                       <span className="mif-person" /> Invitations
                     </button>
                     <button
-                      className="button small info mr-2"
+                      className="button small info mx-1"
                       onClick={() => openChat(chat.id)}
                       title="Rejoindre le chat"
                     >
-                      <span className="mif-chat mr-1" /> Rejoindre
+                      <span className="mif-chat" /> Rejoindre
                     </button>
                     <button
-                      className="button small alert"
+                      className="button small alert mx-1"
                       onClick={() => handleDelete(chat.id)}
                       title="Supprimer"
                     >
