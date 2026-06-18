@@ -86,27 +86,30 @@ export default function SalonsPage() {
                   <td>{formatDateTime(chat.startsAt)}</td>
                   <td>{formatDateTime(chat.endsAt)}</td>
                   <td className="text-right">
-                    <button
-                      className="button small info mx-1"
-                      onClick={() => navigate(`/salons/invites/${chat.id}`)}
-                      title="Inviter des utilisateurices"
-                    >
-                      <span className="mif-person" /> Invitations
-                    </button>
-                    <button
-                      className="button small info mx-1"
-                      onClick={() => openChat(chat.id)}
-                      title="Rejoindre le chat"
-                    >
-                      <span className="mif-chat" /> Rejoindre
-                    </button>
-                    <button
-                      className="button small alert mx-1"
-                      onClick={() => handleDelete(chat.id)}
-                      title="Supprimer"
-                    >
-                      <span className="mif-bin" />
-                    </button>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+                      <button
+                          className="button small info"
+                          onClick={() => navigate(`/salons/invites/${chat.id}`)}
+                          title="Inviter des utilisateurices"
+                          style={{gridColumn: 'span 2'}}
+                      >
+                        <span className="mif-person"/> Invitations
+                      </button>
+                      <button
+                          className="button small info"
+                          onClick={() => openChat(chat.id)}
+                          title="Rejoindre le chat"
+                      >
+                        <span className="mif-chat"/> Rejoindre
+                      </button>
+                      <button
+                          className="button small alert"
+                          onClick={() => handleDelete(chat.id)}
+                          title="Supprimer"
+                      >
+                        <span className="mif-bin"/>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
