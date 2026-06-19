@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
             )}
 
             {success && (
-              <div className="alert border-radius-2 alert-success mb-4">
+              <div className="success border-radius-2 mb-4">
                 <span className="mif-mail mx-2" />
                 <span>{success}</span>
               </div>

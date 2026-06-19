@@ -51,7 +51,7 @@ export default function ResetPasswordPage() {
             )}
 
             {success && (
-              <div className="alert border-radius-2 alert-success mb-4">
+              <div className="success border-radius-2 mb-4">
                 <span className="mif-checkmark mx-2" />
                 <span>{success}</span>
                 <div className="mt-2">
